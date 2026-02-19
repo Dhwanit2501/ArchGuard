@@ -3,7 +3,7 @@ Readme · MD
 Copy
 
 # ArchGuard
-### AI-Assisted Threat Modeling & Attack Path Analysis Engine for Cloud and Software Architectures
+### Threat Modeling & Attack Path Analysis Engine for Cloud, Software & Agentic AI Architectures
 
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
