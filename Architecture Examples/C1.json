@@ -1,0 +1,265 @@
+{
+  "archguard_version": "1.0.0",
+  "project": {
+    "name": "Simple Web Application",
+    "id": "aws-web-app",
+    "cloud_provider": "aws"
+  },
+  "trust_zones": [
+    {
+      "id": "internet",
+      "name": "Internet",
+      "trust_level": "untrusted",
+      "description": "External users"
+    },
+    {
+      "id": "public-subnets",
+      "name": "Public Subnets (Multi-AZ)",
+      "trust_level": "low",
+      "description": "Internet-facing components"
+    },
+    {
+      "id": "private-web-tier",
+      "name": "Private Subnets - Web Tier (Multi-AZ)",
+      "trust_level": "medium",
+      "description": "Application servers"
+    },
+    {
+      "id": "private-db-tier",
+      "name": "Private Subnets - Database Tier (Multi-AZ)",
+      "trust_level": "critical",
+      "description": "Data storage layer"
+    }
+  ],
+  "components": [
+    {
+      "id": "users",
+      "name": "Users",
+      "type": "actor",
+      "trust_zone": "internet",
+      "internet_facing": true,
+      "properties": {
+        "logging": false
+      }
+    },
+    {
+      "id": "igw",
+      "name": "Internet Gateway",
+      "type": "network-gateway",
+      "trust_zone": "public-subnets",
+      "internet_facing": true,
+      "cloud_service": "igw",
+      "properties": {
+        "internet_facing": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "alb",
+      "name": "Application Load Balancer",
+      "type": "load-balancer",
+      "trust_zone": "public-subnets",
+      "internet_facing": true,
+      "cloud_service": "elb",
+      "properties": {
+        "type": "application",
+        "multi_az": true,
+        "health_checks": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "web-server-1",
+      "name": "Web Server 1",
+      "type": "compute",
+      "trust_zone": "private-web-tier",
+      "internet_facing": false,
+      "cloud_service": "ec2",
+      "properties": {
+        "availability_zone": "az-1",
+        "instance_type": "ec2",
+        "logging": true
+      }
+    },
+    {
+      "id": "web-server-2",
+      "name": "Web Server 2",
+      "type": "compute",
+      "trust_zone": "private-web-tier",
+      "internet_facing": false,
+      "cloud_service": "ec2",
+      "properties": {
+        "availability_zone": "az-2",
+        "instance_type": "ec2",
+        "logging": true
+      }
+    },
+    {
+      "id": "iam-role",
+      "name": "EC2 IAM Role",
+      "type": "iam-identity",
+      "trust_zone": "private-web-tier",
+      "internet_facing": false,
+      "cloud_service": "iam",
+      "properties": {
+        "attached_to": [
+          "web-server-1",
+          "web-server-2"
+        ],
+        "permissions": [],
+        "logging": true
+      }
+    },
+    {
+      "id": "mysql-db",
+      "name": "MySQL Database",
+      "type": "database",
+      "trust_zone": "private-db-tier",
+      "internet_facing": false,
+      "cloud_service": "rds",
+      "technologies": [
+        "mysql"
+      ],
+      "properties": {
+        "multi_az": true,
+        "encrypted_at_rest": true,
+        "public_access": false,
+        "logging": true
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "user-requests",
+      "name": "User Requests",
+      "sensitivity": "low"
+    },
+    {
+      "id": "application-data",
+      "name": "Application Data",
+      "sensitivity": "high"
+    },
+    {
+      "id": "database-credentials",
+      "name": "Database Credentials",
+      "sensitivity": "critical"
+    },
+    {
+      "id": "iam-credentials",
+      "name": "IAM Role Credentials",
+      "sensitivity": "critical"
+    }
+  ],
+  "data_flows": [
+    {
+      "id": "df1",
+      "name": "User Request",
+      "source": "users",
+      "destination": "igw",
+      "protocol": "https",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": false,
+      "assets": [
+        "user-requests"
+      ]
+    },
+    {
+      "id": "df2",
+      "name": "IGW to ALB",
+      "source": "igw",
+      "destination": "alb",
+      "protocol": "https",
+      "crosses_boundary": false,
+      "encrypted_in_transit": true,
+      "authenticated": false,
+      "assets": [
+        "user-requests"
+      ]
+    },
+    {
+      "id": "df3",
+      "name": "ALB to Web Server 1",
+      "source": "alb",
+      "destination": "web-server-1",
+      "protocol": "http",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "properties": {
+        "load_balanced": true
+      }
+    },
+    {
+      "id": "df4",
+      "name": "ALB to Web Server 2",
+      "source": "alb",
+      "destination": "web-server-2",
+      "protocol": "http",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "properties": {
+        "load_balanced": true
+      }
+    },
+    {
+      "id": "df5",
+      "name": "Web Server 1 uses IAM",
+      "source": "web-server-1",
+      "destination": "iam-role",
+      "protocol": "aws-internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "flow_type": "assumes-role",
+      "assets": [
+        "iam-credentials"
+      ]
+    },
+    {
+      "id": "df6",
+      "name": "Web Server 2 uses IAM",
+      "source": "web-server-2",
+      "destination": "iam-role",
+      "protocol": "aws-internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "flow_type": "assumes-role",
+      "assets": [
+        "iam-credentials"
+      ]
+    },
+    {
+      "id": "df7",
+      "name": "Web Server 1 to MySQL",
+      "source": "web-server-1",
+      "destination": "mysql-db",
+      "protocol": "mysql",
+      "port": 3306,
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": [
+        "application-data",
+        "database-credentials"
+      ]
+    },
+    {
+      "id": "df8",
+      "name": "Web Server 2 to MySQL",
+      "source": "web-server-2",
+      "destination": "mysql-db",
+      "protocol": "mysql",
+      "port": 3306,
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": [
+        "application-data",
+        "database-credentials"
+      ]
+    }
+  ]
+}

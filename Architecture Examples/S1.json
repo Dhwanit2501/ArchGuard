@@ -1,0 +1,276 @@
+{
+  "archguard_version": "1.0.0",
+  "project": {
+    "name": "E-Commerce Microservices",
+    "id": "ecommerce-microservices"
+  },
+  "trust_zones": [
+    {
+      "id": "frontend",
+      "name": "Frontend / Client Layer",
+      "trust_level": "untrusted",
+      "description": "External client applications"
+    },
+    {
+      "id": "microservices",
+      "name": "Microservices & Internal Logic",
+      "trust_level": "medium",
+      "description": "Internal services layer"
+    },
+    {
+      "id": "data-layer",
+      "name": "Data Layer",
+      "trust_level": "critical",
+      "description": "Persistent data storage"
+    }
+  ],
+  "components": [
+    {
+      "id": "web-browser",
+      "name": "Web Browser",
+      "type": "web-application",
+      "trust_zone": "frontend",
+      "internet_facing": true,
+      "technologies": ["react", "vue"],
+      "properties": {
+        "handles_user_input": true,
+        "logging": false
+      }
+    },
+    {
+      "id": "mobile-app",
+      "name": "Mobile App",
+      "type": "mobile-application",
+      "trust_zone": "frontend",
+      "internet_facing": true,
+      "technologies": ["ios", "android"],
+      "properties": {
+        "handles_user_input": true,
+        "logging": false
+      }
+    },
+    {
+      "id": "api-gateway",
+      "name": "API Gateway",
+      "type": "api-gateway",
+      "trust_zone": "microservices",
+      "internet_facing": true,
+      "properties": {
+        "load_balancing": true,
+        "routing": true,
+        "rate_limiting": true,
+        "entry_point": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "auth-service",
+      "name": "Auth Service",
+      "type": "microservice",
+      "trust_zone": "microservices",
+      "internet_facing": false,
+      "properties": {
+        "handles_authentication": true,
+        "handles_identity": true,
+        "issues_tokens": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "order-service",
+      "name": "Order Service",
+      "type": "microservice",
+      "trust_zone": "microservices",
+      "internet_facing": false,
+      "properties": {
+        "business_logic": true,
+        "handles_transactions": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "inventory-service",
+      "name": "Inventory Service",
+      "type": "microservice",
+      "trust_zone": "microservices",
+      "internet_facing": false,
+      "properties": {
+        "product_data": true,
+        "stock_management": true,
+        "logging": false
+      }
+    },
+    {
+      "id": "user-db",
+      "name": "User DB",
+      "type": "database",
+      "trust_zone": "data-layer",
+      "internet_facing": false,
+      "technologies": ["postgresql"],
+      "properties": {
+        "stores_credentials": true,
+        "stores_pii": true,
+        "encrypted_at_rest": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "order-db",
+      "name": "Order DB",
+      "type": "database",
+      "trust_zone": "data-layer",
+      "internet_facing": false,
+      "technologies": ["nosql"],
+      "properties": {
+        "stores_transactions": true,
+        "encrypted_at_rest": false,
+        "logging": false
+      }
+    },
+    {
+      "id": "inventory-db",
+      "name": "Inventory DB",
+      "type": "database",
+      "trust_zone": "data-layer",
+      "internet_facing": false,
+      "technologies": ["sql"],
+      "properties": {
+        "stores_product_data": true,
+        "encrypted_at_rest": false,
+        "logging": false
+      }
+    }
+  ],
+  "assets": [
+    {"id": "user-credentials", "name": "User Credentials", "sensitivity": "critical"},
+    {"id": "user-pii", "name": "User PII", "sensitivity": "high"},
+    {"id": "order-data", "name": "Order/Transaction Data", "sensitivity": "high"},
+    {"id": "product-data", "name": "Product/Inventory Data", "sensitivity": "medium"},
+    {"id": "auth-tokens", "name": "Authentication Tokens", "sensitivity": "critical"}
+  ],
+  "data_flows": [
+    {
+      "id": "df1",
+      "name": "Web to Gateway",
+      "source": "web-browser",
+      "destination": "api-gateway",
+      "protocol": "https",
+      "format": "json",
+      "flow_type": "rest-api",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": false,
+      "assets": ["user-credentials", "auth-tokens"]
+    },
+    {
+      "id": "df2",
+      "name": "Mobile to Gateway",
+      "source": "mobile-app",
+      "destination": "api-gateway",
+      "protocol": "https",
+      "format": "json",
+      "flow_type": "rest-api",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": false,
+      "assets": ["user-credentials", "auth-tokens"]
+    },
+    {
+      "id": "df3",
+      "name": "Gateway to Auth",
+      "source": "api-gateway",
+      "destination": "auth-service",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": ["user-credentials"]
+    },
+    {
+      "id": "df4",
+      "name": "Gateway to Order",
+      "source": "api-gateway",
+      "destination": "order-service",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": ["order-data"]
+    },
+    {
+      "id": "df5",
+      "name": "Gateway to Inventory",
+      "source": "api-gateway",
+      "destination": "inventory-service",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": ["product-data"]
+    },
+    {
+      "id": "df6",
+      "name": "Auth to Order (S2S)",
+      "source": "auth-service",
+      "destination": "order-service",
+      "protocol": "grpc",
+      "flow_type": "internal-s2s",
+      "crosses_boundary": false,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "properties": {
+        "service_mesh": true
+      }
+    },
+    {
+      "id": "df7",
+      "name": "Order to Inventory (S2S)",
+      "source": "order-service",
+      "destination": "inventory-service",
+      "protocol": "grpc",
+      "flow_type": "internal-s2s",
+      "crosses_boundary": false,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "properties": {
+        "service_mesh": true
+      }
+    },
+    {
+      "id": "df8",
+      "name": "Auth to User DB",
+      "source": "auth-service",
+      "destination": "user-db",
+      "protocol": "postgresql",
+      "flow_type": "database",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "assets": ["user-credentials", "user-pii"]
+    },
+    {
+      "id": "df9",
+      "name": "Order to Order DB",
+      "source": "order-service",
+      "destination": "order-db",
+      "protocol": "nosql",
+      "flow_type": "database",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": ["order-data"]
+    },
+    {
+      "id": "df10",
+      "name": "Inventory to Inventory DB",
+      "source": "inventory-service",
+      "destination": "inventory-db",
+      "protocol": "sql",
+      "flow_type": "database",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": true,
+      "assets": ["product-data"]
+    }
+  ]
+}

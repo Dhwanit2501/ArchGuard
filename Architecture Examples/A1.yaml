@@ -1,0 +1,241 @@
+# Updated
+
+archguard_version: "1.0.0"
+
+project:
+  name: "ReAct Agent Pattern"
+  id: "react-agent"
+  architecture_type: agentic-ai
+  pattern: react
+
+trust_zones:
+  - id: user
+    name: "User"
+    trust_level: untrusted
+    description: "External user input"
+
+  - id: agent
+    name: "Agent"
+    trust_level: medium
+    description: "LLM reasoning and generation"
+
+  - id: tools
+    name: "Tools"
+    trust_level: low
+    description: "External tool execution"
+
+  - id: environment
+    name: "Environment"
+    trust_level: low
+    description: "External world state"
+
+components:
+  - id: user
+    name: "User"
+    type: actor
+    trust_zone: user
+    internet_facing: true                  # Gap 3
+    properties:
+      logging: false                        # Gap 5
+
+  - id: query
+    name: "Query"
+    type: input
+    trust_zone: user
+    internet_facing: true                  # Gap 3: entry point for user input
+    properties:
+      user_input: true
+      logging: false                        # Gap 5: queries rarely logged by default
+
+  - id: llm-reason
+    name: "LLM (Reason)"
+    type: llm
+    trust_zone: agent
+    internet_facing: false                 # Gap 3
+    properties:
+      role: reasoning
+      planning: true
+      tool_selection: true
+      logging: true                         # Gap 5: reasoning steps should be logged
+    agentic_properties:
+      thought_generation: true
+      action_selection: true
+
+  - id: tools
+    name: "Tools"
+    type: tool-executor
+    trust_zone: tools
+    internet_facing: true                  # Gap 3: tools often call external APIs
+    properties:
+      code_execution: true
+      api_calls: true
+      logging: true                         # Gap 5: tool calls must be logged
+
+  - id: environment
+    name: "Environment"
+    type: external-system
+    trust_zone: environment
+    internet_facing: true                  # Gap 3: external world
+    properties:
+      world_state: true
+      observable: true
+      logging: false                        # Gap 5: external env not under our control
+
+  - id: llm-generate
+    name: "LLM (Generate)"
+    type: llm
+    trust_zone: agent
+    internet_facing: false                 # Gap 3
+    properties:
+      role: generation
+      response_synthesis: true
+      logging: true                         # Gap 5
+
+  - id: response
+    name: "Response"
+    type: output
+    trust_zone: user
+    internet_facing: true                  # Gap 3: output reaches the user
+    properties:
+      logging: false                        # Gap 5
+
+assets:
+  - id: user-query
+    name: "User Query"
+    sensitivity: medium
+    risk: prompt-injection
+
+  - id: reasoning-chain
+    name: "Reasoning Chain"
+    sensitivity: medium
+    description: "Thought-Action-Observation sequence"
+
+  - id: tool-results
+    name: "Tool Results"
+    sensitivity: high
+    risk: indirect-injection
+
+  - id: environment-state
+    name: "Environment State"
+    sensitivity: medium
+
+data_flows:
+  # User Query to Reasoning LLM
+  - id: df1
+    name: "User Query"
+    source: user
+    destination: query
+    protocol: user-input
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1: raw user input, not encrypted
+    authenticated: false                   # Gap 2: unauthenticated user input
+
+  - id: df2
+    name: "Query to Reason"
+    source: query
+    destination: llm-reason
+    protocol: internal
+    crosses_boundary: true
+    encrypted_in_transit: false            # Gap 1
+    authenticated: false                   # Gap 2: prompt is passed without auth
+    assets: [user-query]
+    threats:
+      - direct-prompt-injection
+
+  # ReAct Loop: Reason → Tools → Environment → Reason
+  - id: df3
+    name: "Action (Tool Call)"
+    source: llm-reason
+    destination: tools
+    protocol: function-call
+    crosses_boundary: true
+    encrypted_in_transit: false            # Gap 1
+    authenticated: false                   # Gap 2: tool calls often lack auth checks
+    flow_type: action
+    assets: [reasoning-chain]
+    threats:
+      - tool-misuse
+      - excessive-agency
+
+  - id: df4
+    name: "Tool Execution"
+    source: tools
+    destination: environment
+    protocol: external
+    crosses_boundary: true
+    encrypted_in_transit: true             # Gap 1: external calls should use TLS
+    authenticated: true                    # Gap 2: external APIs use API keys
+    flow_type: action
+    threats:
+      - unintended-side-effects
+
+  - id: df5
+    name: "Observation (Result)"
+    source: environment
+    destination: llm-reason
+    protocol: internal
+    crosses_boundary: true
+    encrypted_in_transit: true             # Gap 1
+    authenticated: false                   # Gap 2: returned data not verified
+    flow_type: observation
+    assets: [tool-results, environment-state]
+    threats:
+      - indirect-prompt-injection
+      - data-poisoning
+
+  # Loop back (iterative reasoning)
+  - id: df6
+    name: "Reasoning Loop"
+    source: llm-reason
+    destination: llm-reason
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1: internal self-loop
+    authenticated: false                   # Gap 2: self-loop
+    flow_type: iteration
+    properties:
+      max_iterations: 10
+      stop_condition: task-complete
+
+  # Final Response Generation
+  - id: df7
+    name: "Generate Response"
+    source: llm-reason
+    destination: llm-generate
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1: internal agent flow
+    authenticated: false                   # Gap 2
+    assets: [reasoning-chain]
+
+  - id: df8
+    name: "Final Response"
+    source: llm-generate
+    destination: response
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1
+    authenticated: false                   # Gap 2
+
+  - id: df9
+    name: "Response to User"
+    source: response
+    destination: user
+    protocol: user-output
+    crosses_boundary: true
+    encrypted_in_transit: false            # Gap 1: depends on transport
+    authenticated: false                   # Gap 2
+    threats:
+      - sensitive-data-exposure
+
+# ReAct Pattern Specific
+react_pattern:
+  loop_structure:
+    - thought: "LLM reasons about the task"
+    - action: "LLM selects and invokes a tool"
+    - observation: "Tool returns result from environment"
+    - repeat: "Until task is complete or max iterations"
+  termination_conditions:
+    - task_complete: true
+    - max_iterations: 10
+    - error_threshold: 3

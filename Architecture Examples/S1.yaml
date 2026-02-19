@@ -1,0 +1,263 @@
+
+# Updated and addressed some gaps
+
+# Software / Service-Based Architecture
+archguard_version: "1.0.0"
+
+project:
+  name: "E-Commerce Microservices"
+  id: "ecommerce-microservices"
+
+trust_zones:
+  - id: frontend
+    name: "Frontend / Client Layer"
+    trust_level: untrusted
+    description: "External client applications"
+
+  - id: microservices
+    name: "Microservices & Internal Logic"
+    trust_level: medium
+    description: "Internal services layer"
+
+  - id: data-layer
+    name: "Data Layer"
+    trust_level: critical
+    description: "Persistent data storage"
+
+components:
+  # Frontend / Client Layer
+  - id: web-browser
+    name: "Web Browser"
+    type: web-application
+    trust_zone: frontend
+    internet_facing: true                  # Gap 3: explicit exposure flag
+    technologies: [react, vue]
+    properties:
+      handles_user_input: true
+      logging: false                        # Gap 5: repudiation signal
+
+  - id: mobile-app
+    name: "Mobile App"
+    type: mobile-application
+    trust_zone: frontend
+    internet_facing: true                  # Gap 3
+    technologies: [ios, android]
+    properties:
+      handles_user_input: true
+      logging: false                        # Gap 5
+
+# Microservices Layer
+  - id: api-gateway
+    name: "API Gateway"
+    type: api-gateway
+    trust_zone: microservices
+    internet_facing: true                  # Gap 3: primary entry point
+    properties:
+      load_balancing: true
+      routing: true
+      rate_limiting: true
+      entry_point: true
+      logging: true                         # Gap 5
+
+  - id: auth-service
+    name: "Auth Service"
+    type: microservice
+    trust_zone: microservices
+    internet_facing: false                 # Gap 3
+    properties:
+      handles_authentication: true
+      handles_identity: true
+      issues_tokens: true
+      logging: true                         # Gap 5
+
+  - id: order-service
+    name: "Order Service"
+    type: microservice
+    trust_zone: microservices
+    internet_facing: false                 # Gap 3
+    properties:
+      business_logic: true
+      handles_transactions: true
+      logging: true                         # Gap 5
+
+  - id: inventory-service
+    name: "Inventory Service"
+    type: microservice
+    trust_zone: microservices
+    internet_facing: false                 # Gap 3
+    properties:
+      product_data: true
+      stock_management: true
+      logging: false                        # Gap 5: repudiation signal
+
+  # Data Layer
+  - id: user-db
+    name: "User DB"
+    type: database
+    trust_zone: data-layer
+    internet_facing: false                 # Gap 3
+    technologies: [postgresql]
+    properties:
+      stores_credentials: true
+      stores_pii: true
+      encrypted_at_rest: true              # Gap 4: consistent encryption field
+      logging: true                         # Gap 5
+
+  - id: order-db
+    name: "Order DB"
+    type: database
+    trust_zone: data-layer
+    internet_facing: false                 # Gap 3
+    technologies: [nosql]
+    properties:
+      stores_transactions: true
+      encrypted_at_rest: false             # Gap 4: was missing, high-sensitivity data
+      logging: false                        # Gap 5
+
+  - id: inventory-db
+    name: "Inventory DB"
+    type: database
+    trust_zone: data-layer
+    internet_facing: false                 # Gap 3
+    technologies: [sql]
+    properties:
+      stores_product_data: true
+      encrypted_at_rest: false             # Gap 4: was missing
+      logging: false                        # Gap 5
+
+assets:
+  - id: user-credentials
+    name: "User Credentials"
+    sensitivity: critical
+
+  - id: user-pii
+    name: "User PII"
+    sensitivity: high
+
+  - id: order-data
+    name: "Order/Transaction Data"
+    sensitivity: high
+
+  - id: product-data
+    name: "Product/Inventory Data"
+    sensitivity: medium
+
+  - id: auth-tokens
+    name: "Authentication Tokens"
+    sensitivity: critical
+
+data_flows:
+  # External REST API (Blue Arrows)
+  - id: df1
+    name: "Web to Gateway"
+    source: web-browser
+    destination: api-gateway
+    protocol: https
+    format: json
+    flow_type: rest-api
+    crosses_boundary: true
+    encrypted_in_transit: true             # Gap 1
+    authenticated: false                   # Gap 2: unauthenticated before gateway
+    assets: [user-credentials, auth-tokens]
+
+  - id: df2
+    name: "Mobile to Gateway"
+    source: mobile-app
+    destination: api-gateway
+    protocol: https
+    format: json
+    flow_type: rest-api
+    crosses_boundary: true
+    encrypted_in_transit: true             # Gap 1
+    authenticated: false                   # Gap 2
+    assets: [user-credentials, auth-tokens]
+
+  # Gateway to Services
+  - id: df3
+    name: "Gateway to Auth"
+    source: api-gateway
+    destination: auth-service
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1: internal, unencrypted
+    authenticated: true                    # Gap 2: gateway authenticates before forwarding
+    assets: [user-credentials]
+
+  - id: df4
+    name: "Gateway to Order"
+    source: api-gateway
+    destination: order-service
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1
+    authenticated: true                    # Gap 2
+    assets: [order-data]
+
+  - id: df5
+    name: "Gateway to Inventory"
+    source: api-gateway
+    destination: inventory-service
+    protocol: internal
+    crosses_boundary: false
+    encrypted_in_transit: false            # Gap 1
+    authenticated: true                    # Gap 2
+    assets: [product-data]
+
+  # Internal S2S Communication
+  - id: df6
+    name: "Auth to Order"
+    source: auth-service
+    destination: order-service
+    protocol: grpc
+    flow_type: internal-s2s
+    crosses_boundary: false
+    encrypted_in_transit: true             # Gap 1: gRPC with TLS
+    authenticated: true                    # Gap 2: mutual service auth
+    properties:
+      service_mesh: true
+
+  - id: df7
+    name: "Order to Inventory"
+    source: order-service
+    destination: inventory-service
+    protocol: grpc
+    flow_type: internal-s2s
+    crosses_boundary: false
+    encrypted_in_transit: true             # Gap 1
+    authenticated: true                    # Gap 2
+    properties:
+      service_mesh: true
+
+  # Database Connections
+  - id: df8
+    name: "Auth to User DB"
+    source: auth-service
+    destination: user-db
+    protocol: postgresql
+    flow_type: database
+    crosses_boundary: true                 # crosses into data-layer trust zone
+    encrypted_in_transit: true             # Gap 1
+    authenticated: true                    # Gap 2
+    assets: [user-credentials, user-pii]
+
+  - id: df9
+    name: "Order to Order DB"
+    source: order-service
+    destination: order-db
+    protocol: nosql
+    flow_type: database
+    crosses_boundary: true
+    encrypted_in_transit: false            # Gap 1: unencrypted DB connection
+    authenticated: true                    # Gap 2
+    assets: [order-data]
+
+  - id: df10
+    name: "Inventory to Inventory DB"
+    source: inventory-service
+    destination: inventory-db
+    protocol: sql
+    flow_type: database
+    crosses_boundary: true
+    encrypted_in_transit: false            # Gap 1
+    authenticated: true                    # Gap 2
+    assets: [product-data]

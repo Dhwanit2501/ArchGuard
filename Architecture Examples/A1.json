@@ -1,0 +1,303 @@
+{
+  "archguard_version": "1.0.0",
+  "project": {
+    "name": "ReAct Agent Pattern",
+    "id": "react-agent",
+    "architecture_type": "agentic-ai",
+    "pattern": "react"
+  },
+  "trust_zones": [
+    {
+      "id": "user",
+      "name": "User",
+      "trust_level": "untrusted",
+      "description": "External user input"
+    },
+    {
+      "id": "agent",
+      "name": "Agent",
+      "trust_level": "medium",
+      "description": "LLM reasoning and generation"
+    },
+    {
+      "id": "tools",
+      "name": "Tools",
+      "trust_level": "low",
+      "description": "External tool execution"
+    },
+    {
+      "id": "environment",
+      "name": "Environment",
+      "trust_level": "low",
+      "description": "External world state"
+    }
+  ],
+  "components": [
+    {
+      "id": "user",
+      "name": "User",
+      "type": "actor",
+      "trust_zone": "user",
+      "internet_facing": true,
+      "properties": {
+        "logging": false
+      }
+    },
+    {
+      "id": "query",
+      "name": "Query",
+      "type": "input",
+      "trust_zone": "user",
+      "internet_facing": true,
+      "properties": {
+        "user_input": true,
+        "logging": false
+      }
+    },
+    {
+      "id": "llm-reason",
+      "name": "LLM (Reason)",
+      "type": "llm",
+      "trust_zone": "agent",
+      "internet_facing": false,
+      "properties": {
+        "role": "reasoning",
+        "planning": true,
+        "tool_selection": true,
+        "logging": true
+      },
+      "agentic_properties": {
+        "thought_generation": true,
+        "action_selection": true
+      }
+    },
+    {
+      "id": "tools",
+      "name": "Tools",
+      "type": "tool-executor",
+      "trust_zone": "tools",
+      "internet_facing": true,
+      "properties": {
+        "code_execution": true,
+        "api_calls": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "environment",
+      "name": "Environment",
+      "type": "external-system",
+      "trust_zone": "environment",
+      "internet_facing": true,
+      "properties": {
+        "world_state": true,
+        "observable": true,
+        "logging": false
+      }
+    },
+    {
+      "id": "llm-generate",
+      "name": "LLM (Generate)",
+      "type": "llm",
+      "trust_zone": "agent",
+      "internet_facing": false,
+      "properties": {
+        "role": "generation",
+        "response_synthesis": true,
+        "logging": true
+      }
+    },
+    {
+      "id": "response",
+      "name": "Response",
+      "type": "output",
+      "trust_zone": "user",
+      "internet_facing": true,
+      "properties": {
+        "logging": false
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "user-query",
+      "name": "User Query",
+      "sensitivity": "medium",
+      "risk": "prompt-injection"
+    },
+    {
+      "id": "reasoning-chain",
+      "name": "Reasoning Chain",
+      "sensitivity": "medium",
+      "description": "Thought-Action-Observation sequence"
+    },
+    {
+      "id": "tool-results",
+      "name": "Tool Results",
+      "sensitivity": "high",
+      "risk": "indirect-injection"
+    },
+    {
+      "id": "environment-state",
+      "name": "Environment State",
+      "sensitivity": "medium"
+    }
+  ],
+  "data_flows": [
+    {
+      "id": "df1",
+      "name": "User Query",
+      "source": "user",
+      "destination": "query",
+      "protocol": "user-input",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": false
+    },
+    {
+      "id": "df2",
+      "name": "Query to Reason",
+      "source": "query",
+      "destination": "llm-reason",
+      "protocol": "internal",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "assets": [
+        "user-query"
+      ],
+      "threats": [
+        "direct-prompt-injection"
+      ]
+    },
+    {
+      "id": "df3",
+      "name": "Action (Tool Call)",
+      "source": "llm-reason",
+      "destination": "tools",
+      "protocol": "function-call",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "flow_type": "action",
+      "assets": [
+        "reasoning-chain"
+      ],
+      "threats": [
+        "tool-misuse",
+        "excessive-agency"
+      ]
+    },
+    {
+      "id": "df4",
+      "name": "Tool Execution",
+      "source": "tools",
+      "destination": "environment",
+      "protocol": "external",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": true,
+      "flow_type": "action",
+      "threats": [
+        "unintended-side-effects"
+      ]
+    },
+    {
+      "id": "df5",
+      "name": "Observation (Result)",
+      "source": "environment",
+      "destination": "llm-reason",
+      "protocol": "internal",
+      "crosses_boundary": true,
+      "encrypted_in_transit": true,
+      "authenticated": false,
+      "flow_type": "observation",
+      "assets": [
+        "tool-results",
+        "environment-state"
+      ],
+      "threats": [
+        "indirect-prompt-injection",
+        "data-poisoning"
+      ]
+    },
+    {
+      "id": "df6",
+      "name": "Reasoning Loop",
+      "source": "llm-reason",
+      "destination": "llm-reason",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "flow_type": "iteration",
+      "properties": {
+        "max_iterations": 10,
+        "stop_condition": "task-complete"
+      }
+    },
+    {
+      "id": "df7",
+      "name": "Generate Response",
+      "source": "llm-reason",
+      "destination": "llm-generate",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "assets": [
+        "reasoning-chain"
+      ]
+    },
+    {
+      "id": "df8",
+      "name": "Final Response",
+      "source": "llm-generate",
+      "destination": "response",
+      "protocol": "internal",
+      "crosses_boundary": false,
+      "encrypted_in_transit": false,
+      "authenticated": false
+    },
+    {
+      "id": "df9",
+      "name": "Response to User",
+      "source": "response",
+      "destination": "user",
+      "protocol": "user-output",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "threats": [
+        "sensitive-data-exposure"
+      ]
+    }
+  ],
+  "react_pattern": {
+    "loop_structure": [
+      {
+        "thought": "LLM reasons about the task"
+      },
+      {
+        "action": "LLM selects and invokes a tool"
+      },
+      {
+        "observation": "Tool returns result from environment"
+      },
+      {
+        "repeat": "Until task is complete or max iterations"
+      }
+    ],
+    "termination_conditions": [
+      {
+        "task_complete": true
+      },
+      {
+        "max_iterations": 10
+      },
+      {
+        "error_threshold": 3
+      }
+    ]
+  }
+}
