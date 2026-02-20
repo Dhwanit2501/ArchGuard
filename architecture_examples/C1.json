@@ -27,7 +27,7 @@
     {
       "id": "private-db-tier",
       "name": "Private Subnets - Database Tier (Multi-AZ)",
-      "trust_level": "critical",
+      "trust_level": "trusted",
       "description": "Data storage layer"
     }
   ],

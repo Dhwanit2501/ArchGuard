@@ -20,7 +20,7 @@
     {
       "id": "data-layer",
       "name": "Data Layer",
-      "trust_level": "critical",
+      "trust_level": "trusted",
       "description": "Persistent data storage"
     }
   ],

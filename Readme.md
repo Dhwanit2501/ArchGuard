@@ -1,7 +1,4 @@
 
-Readme · MD
-Copy
-
 # ArchGuard
 ### Threat Modeling & Attack Path Analysis Engine for Cloud, Software & Agentic AI Architectures
 
@@ -15,7 +12,7 @@ Copy
 
 ArchGuard is a hybrid threat modeling engine that combines deterministic STRIDE-based threat identification with MITRE ATT&CK and MITRE ATLAS technique mapping and controlled AI-assisted reasoning to support design-time security analysis of modern software, cloud, and agentic AI architectures.
 
-The system accepts structured architecture descriptions in YAML or JSON format and produces component-level threat models, mapped attacker techniques, and plausible multi-step attack paths — making security analysis scalable, explainable, and framework-grounded.
+The system accepts structured architecture descriptions in YAML or JSON format and produces component-level threat models, mapped attacker techniques, and plausible multi-step attack paths - making security analysis scalable, explainable, and framework-grounded.
 
 > This project is developed as part of an independent study (CSCI-Y 790) at Indiana University, Spring 2026.
 
@@ -55,11 +52,51 @@ Architecture File (YAML/JSON)
   Threat Report & Attack Paths
 ```
 
-1. **Architecture Parser** — Ingests YAML/JSON architecture descriptions, validates structure and referential integrity, and returns a clean Python dictionary
-2. **Graph Builder** — Converts the parsed architecture into a directed graph with components as nodes and data flows as edges
-3. **STRIDE Engine** — Deterministic rule-based threat identification across all architecture elements
-4. **ATT&CK / ATLAS Mapping** — Maps identified threats to relevant MITRE techniques based on architecture type
-5. **LLM Reasoning Layer** — Augments rule-based output with context-aware explanations and multi-step attack path construction
-6. **Report Generator** — Produces structured threat reports with CVSS-based risk prioritization
+### Some crucial attributes
+
+#### Project
+
+- id : unique identifier for the architecture
+- name : display name
+
+
+#### Trust Zones
+
+- id : referenced by components to assign them to a zone
+- trust_level : how much you trust traffic from this zone
+
+
+#### Components
+
+- id : referenced by data flows as source/destination
+- type : drives which STRIDE rules apply
+- trust_zone : which zone this component belongs to
+- internet_facing : is it reachable from the internet
+- logging : is activity logged, false = Repudiation threat
+- encrypted_at_rest : is stored data encrypted, false = Information Disclosure threat
+
+
+#### Assets
+
+- id : referenced by data flows
+- sensitivity : drives threat severity and risk prioritization
+
+
+#### Data Flows
+
+- source / destination : direction of data movement
+- crosses_boundary : does it cross trust zones, high-risk trigger
+- encrypted_in_transit : false = Information Disclosure threat
+- authenticated : false = Spoofing threat
+- assets : what sensitive data travels through this flow
+
+##
+
+1. **Architecture Parser** : Ingests YAML/JSON architecture descriptions, validates structure and referential integrity, and returns a clean Python dictionary
+2. **Graph Builder** : Converts the parsed architecture into a directed graph with components as nodes and data flows as edges
+3. **STRIDE Engine** : Deterministic rule-based threat identification across all architecture elements
+4. **ATT&CK / ATLAS Mapping** : Maps identified threats to relevant MITRE techniques based on architecture type
+5. **LLM Reasoning Layer** : Augments rule-based output with context-aware explanations and multi-step attack path construction
+6. **Report Generator** : Produces structured threat reports with CVSS-based risk prioritization
 
 ---

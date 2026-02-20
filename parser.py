@@ -27,7 +27,7 @@ REQUIRED_COMPONENT_FIELDS    = ["id", "name", "type", "trust_zone"]
 REQUIRED_ASSET_FIELDS        = ["id", "name", "sensitivity"]
 REQUIRED_DATA_FLOW_FIELDS    = ["id", "name", "source", "destination", "protocol"]
 
-VALID_TRUST_LEVELS    = {"untrusted", "low", "medium", "trusted", "critical"}
+VALID_TRUST_LEVELS    = {"untrusted", "low", "medium", "high" ,"trusted"}
 VALID_SENSITIVITIES   = {"low", "medium", "high", "critical"}
 VALID_COMPONENT_TYPES = {
     
@@ -113,13 +113,13 @@ class ArchitectureParser:
 
     def _validate(self):
         """Run all validation checks. Raises on first batch of errors."""
-        self.check_top_level()
-        self.check_project()
-        self.check_trust_zones()
-        self.check_components()
-        self.check_assets()
-        self.check_data_flows()
-        self.check_referential_integrity()
+        self._check_top_level()
+        self._check_project()
+        self._check_trust_zones()
+        self._check_components()
+        self._check_assets()
+        self._check_data_flows()
+        self._check_referential_integrity()
 
         if self.errors:
             error_list = "\n  - ".join(self.errors)
@@ -127,7 +127,7 @@ class ArchitectureParser:
                 f"Architecture validation failed with {len(self.errors)} error(s):\n  - {error_list}"
             )
 
-    def check_top_level(self):
+    def _check_top_level(self):
         for key, expected_type in REQUIRED_TOP_LEVEL.items():
             if key not in self.raw:
                 self.errors.append(f"Missing required top-level key: '{key}'")
@@ -137,7 +137,7 @@ class ArchitectureParser:
                     f"got {type(self.raw[key]).__name__}"
                 )
 
-    def check_project(self):
+    def _check_project(self):
         project = self.raw.get("project", {})
         for field in REQUIRED_PROJECT_FIELDS:
             if field not in project:
@@ -149,7 +149,7 @@ class ArchitectureParser:
     #   - Duplicate id check
     #   - Trust level is from the defined set
 
-    def check_trust_zones(self):
+    def _check_trust_zones(self):
         zones = self.raw.get("trust_zones", [])
         if not zones:
             self.errors.append("trust_zones: must define at least one trust zone")
@@ -175,7 +175,7 @@ class ArchitectureParser:
     #   - Duplicate id check
     #   - Componenets are from the defined set
 
-    def check_components(self):
+    def _check_components(self):
         components = self.raw.get("components", [])
         if not components:
             self.errors.append("components: must define at least one component")
@@ -208,7 +208,7 @@ class ArchitectureParser:
     #   - Duplicate id check
     #   - Sensitivity are from the defined set
 
-    def check_assets(self):
+    def _check_assets(self):
         assets = self.raw.get("assets", [])
         if not assets:
             self.errors.append("assets: must define at least one asset")
@@ -235,7 +235,7 @@ class ArchitectureParser:
     #   - Duplicate id check
     #   - Structurally valid
 
-    def check_data_flows(self):
+    def _check_data_flows(self):
         flows = self.raw.get("data_flows", [])
         if not flows:
             self.errors.append("data_flows: must define at least one data flow")
@@ -256,7 +256,7 @@ class ArchitectureParser:
     #   - Avoid dangling references ( a concept from databases, where it ensures if an entity points to some id, it actually exists in the database)
 
 
-    def check_referential_integrity(self):
+    def _check_referential_integrity(self):
         """Ensure data flow sources/destinations and asset refs point to real IDs."""
         component_ids = {c["id"] for c in self.raw.get("components", []) if "id" in c}
         asset_ids     = {a["id"] for a in self.raw.get("assets", []) if "id" in a}
@@ -276,6 +276,71 @@ class ArchitectureParser:
                     self.errors.append(
                         f"{prefix}: asset ref '{asset_ref}' not found in assets"
                     )
+
+
+    @staticmethod
+    def summary(arch: dict):
+        """
+        Print a clean, readable summary of the parsed architecture dict.
+        Can be called after parse() to inspect what was loaded.
+        """
+        project     = arch.get("project", {})
+        trust_zones = arch.get("trust_zones", [])
+        components  = arch.get("components", [])
+        assets      = arch.get("assets", [])
+        data_flows  = arch.get("data_flows", [])
+
+        sep = "*" * 55
+
+        print("\n" + sep)
+        print("  ArchGuard - Architecture Summary")
+        print(sep)
+        print(f"  Name              : {project.get('name', 'N/A')}")
+        print(f"  ID                : {project.get('id', 'N/A')}")
+        if "cloud_provider" in project:
+            print(f"  Cloud Provider    : {project['cloud_provider']}")
+        if "architecture_type" in project:
+            print(f"  Architecture Type : {project['architecture_type']}")
+        if "pattern" in project:
+            print(f"  Pattern           : {project['pattern']}")
+
+        print(f"\n # Trust Zones ({len(trust_zones)}):"+"\n")
+        print(f"  {'ID':<25} {'TRUST LEVEL':<15}")
+        print(f"  {'-'*24} {'-'*14}")
+        for tz in trust_zones:
+            print(f"  {tz['id']:<25} {tz['trust_level'].upper():<15}")
+
+        print(f"\n # Components ({len(components)}):"+"\n")
+        print(f"  {'ID':<25} {'TYPE':<22} {'TRUST ZONE':<17} {'EXPOSURE':<10} {'LOGGING'}")
+        print(f"  {'-'*24} {'-'*21} {'-'*19} {'-'*9} {'-'*7}")
+        for c in components:
+            exposure = "INTERNET" if c.get("internet_facing") else "INTERNAL"
+            logging  = "YES" if c.get("properties", {}).get("logging") else "NO"
+            print(f"  {c['id']:<25} {c['type']:<22} {c['trust_zone']:<17} {exposure:<10} {logging}")
+
+        print(f"\n # Assets ({len(assets)}):"+"\n")
+        print(f"  {'ID':<30} {'SENSITIVITY':<12}")
+        print(f"  {'-'*29} {'-'*11}")
+        order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+        sorted_assets = sorted(assets, key=lambda a: order.get(a.get("sensitivity", "low"), 4))
+        for a in sorted_assets:
+            print(f"  {a['id']:<30} {a.get('sensitivity', 'N/A').upper():<12}")
+
+        print(f"\n # Data Flows ({len(data_flows)}):"+"\n")
+        print(f"  {'ID':<6} {'FLOW':<51} {'CROSSES BOUNDARY':<19} {'ENCRYPTED':<11} {'AUTH'}")
+        print(f"  {'-'*5} {'-'*52} {'-'*18} {'-'*10} {'-'*10}")
+        for df in data_flows:
+            boundary  = "YES" if df.get("crosses_boundary") else "NO"
+            encrypted = "YES" if df.get("encrypted_in_transit") else "NO"
+            auth      = "YES" if df.get("authenticated") else "NO"
+            src  = df.get('source', '?')
+            dst  = df.get('destination', '?')
+            flow = f"{src} --> {dst}"
+            print(f"  {df['id']:<6} {flow:<53} {boundary:<20} {encrypted:<11} {auth}")
+
+
+        print("\n" + sep + "\n")
+
 
 
 # Wraper function around class to keep the internals of parser hidden
@@ -306,6 +371,7 @@ if __name__ == "__main__":
         print(f"   Components  : {len(arch['components'])}")
         print(f"   Assets      : {len(arch['assets'])}")
         print(f"   Data flows  : {len(arch['data_flows'])}")
+        ArchitectureParser.summary(arch)
     except (FileNotFoundError, ArchGuardValidationError) as e:
         print(f"❌ Error: {e}")
         sys.exit(1)

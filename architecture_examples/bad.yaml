@@ -1,0 +1,22 @@
+archguard_version: "1.0.0"
+project:
+  name: "Bad Architecture"
+trust_zones:
+  - id: tz1
+    name: "Zone"
+    trust_level: superuser
+components:
+  - id: c1
+    name: "Service"
+    type: microservice
+    trust_zone: nonexistent
+assets:
+  - id: a1
+    name: "Data"
+    sensitivity: ultra
+data_flows:
+  - id: df1
+    name: "Flow"
+    source: ghost
+    destination: c1
+    protocol: https
