@@ -183,7 +183,7 @@ def visualize(
         },
         "edges": {
             "arrows": { "to": { "enabled": true, "scaleFactor": 1 } },
-            "smooth": { "enabled": false },
+            "smooth": { "type": "dynamic" },
             "font": {
                 "size": 12,
                 "color": "#ffffff",

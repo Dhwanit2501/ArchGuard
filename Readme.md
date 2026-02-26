@@ -100,3 +100,42 @@ Architecture File (YAML/JSON)
 6. **Report Generator** : Produces structured threat reports with CVSS-based risk prioritization
 
 ---
+
+# Usage
+
+All commands are run from the root `archguard/` directory with the virtual environment activated.
+
+### Step 1 — Validate an architecture file
+```bash
+python parser.py architecture_examples/<file_name>.yaml
+```
+
+**Expected output:**
+```
+✅ Parsed successfully: E-Commerce Microservices
+   Trust zones : 3
+   Components  : 9
+   Assets      : 5
+   Data flows  : 10
+```
+
+---
+
+### Step 2 — Build and inspect the graph
+```bash
+python -m graph.builder architecture_examples/<file_name>.yaml <backend>
+```
+
+- `<backend>` : `networkx` (default) or `igraph`
+
+Prints a structured text summary showing nodes, edges, internet-facing components, and boundary-crossing flows.
+
+---
+
+### Step 3 — Generate interactive visualization (pyvis)
+```bash
+python -m graph.visualizer architecture_examples/<file_name>.yaml <backend> <output_file_name>.html
+```
+
+Opens as an interactive HTML file in any browser. Supports drag, zoom, and hover tooltips showing security properties for each node and edge.
+
