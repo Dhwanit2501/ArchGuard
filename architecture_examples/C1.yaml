@@ -1,4 +1,4 @@
-# Upadted 
+# Updated
 
 # Simple Cloud Web Application Architecture
 archguard_version: "1.0.0"
@@ -35,80 +35,93 @@ components:
     name: "Users"
     type: actor
     trust_zone: internet
-    internet_facing: true                  # Gap 3
+    internet_facing: true
     properties:
-      logging: false                        # Gap 5
+      logging: false
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   # Public Subnets
   - id: igw
     name: "Internet Gateway"
     type: network-gateway
     trust_zone: public-subnets
-    internet_facing: true                  # Gap 3
+    internet_facing: true
     cloud_service: igw
     properties:
-      internet_facing: true
-      logging: true                         # Gap 5
+      logging: true
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   - id: alb
     name: "Application Load Balancer"
     type: load-balancer
     trust_zone: public-subnets
-    internet_facing: true                  # Gap 3
+    internet_facing: true
     cloud_service: elb
     properties:
       type: application
       multi_az: true
       health_checks: true
-      logging: true                         # Gap 5
+      logging: true
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   # Private Web Tier
   - id: web-server-1
     name: "Web Server 1"
     type: compute
     trust_zone: private-web-tier
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     cloud_service: ec2
     properties:
       availability_zone: az-1
       instance_type: ec2
-      logging: true                         # Gap 5
+      logging: true
+      resource_limits: false
+      over_privileged: false
 
   - id: web-server-2
     name: "Web Server 2"
     type: compute
     trust_zone: private-web-tier
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     cloud_service: ec2
     properties:
       availability_zone: az-2
       instance_type: ec2
-      logging: true                         # Gap 5
+      logging: true
+      resource_limits: false
+      over_privileged: false
 
   - id: iam-role
     name: "EC2 IAM Role"
     type: iam-identity
     trust_zone: private-web-tier
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     cloud_service: iam
     properties:
       attached_to: [web-server-1, web-server-2]
       permissions: []
-      logging: true                         # Gap 5: IAM actions should always be logged
+      logging: true
+      over_privileged: false
 
   # Private Database Tier
   - id: mysql-db
     name: "MySQL Database"
     type: database
     trust_zone: private-db-tier
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     cloud_service: rds
     technologies: [mysql]
     properties:
       multi_az: true
-      encrypted_at_rest: true              # Gap 4: consistent field name
+      encrypted_at_rest: true
       public_access: false
-      logging: true                         # Gap 5
+      logging: true
 
 assets:
   - id: user-requests
@@ -128,37 +141,37 @@ assets:
     sensitivity: critical
 
 data_flows:
-  # Users to Internet Gateway
   - id: df1
     name: "User Request"
     source: users
     destination: igw
     protocol: https
     crosses_boundary: true
-    encrypted_in_transit: true             # Gap 1
-    authenticated: false                   # Gap 2: unauthenticated public traffic
+    encrypted_in_transit: true
+    authenticated: false
+    authorized: false
     assets: [user-requests]
 
-  # Internet Gateway to ALB
   - id: df2
     name: "IGW to ALB"
     source: igw
     destination: alb
     protocol: https
     crosses_boundary: false
-    encrypted_in_transit: true             # Gap 1
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: true
+    authenticated: false
+    authorized: false
     assets: [user-requests]
 
-  # ALB to Web Servers
   - id: df3
     name: "ALB to Web Server 1"
     source: alb
     destination: web-server-1
     protocol: http
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1: HTTP internally, not HTTPS
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     properties:
       load_balanced: true
 
@@ -168,20 +181,21 @@ data_flows:
     destination: web-server-2
     protocol: http
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     properties:
       load_balanced: true
 
-  # Web Servers to IAM Role
   - id: df5
     name: "Web Server 1 uses IAM"
     source: web-server-1
     destination: iam-role
     protocol: aws-internal
     crosses_boundary: false
-    encrypted_in_transit: true             # Gap 1: AWS internal always encrypted
-    authenticated: true                    # Gap 2: IAM role assumption is authenticated
+    encrypted_in_transit: true
+    authenticated: true
+    authorized: true
     flow_type: assumes-role
     assets: [iam-credentials]
 
@@ -191,12 +205,12 @@ data_flows:
     destination: iam-role
     protocol: aws-internal
     crosses_boundary: false
-    encrypted_in_transit: true             # Gap 1
-    authenticated: true                    # Gap 2
+    encrypted_in_transit: true
+    authenticated: true
+    authorized: true
     flow_type: assumes-role
     assets: [iam-credentials]
 
-  # Web Servers to Database
   - id: df7
     name: "Web Server 1 to MySQL"
     source: web-server-1
@@ -204,8 +218,9 @@ data_flows:
     protocol: mysql
     port: 3306
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1: MySQL not encrypted in transit by default
-    authenticated: true                    # Gap 2
+    encrypted_in_transit: false
+    authenticated: true
+    authorized: true
     assets: [application-data, database-credentials]
 
   - id: df8
@@ -215,6 +230,7 @@ data_flows:
     protocol: mysql
     port: 3306
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1
-    authenticated: true                    # Gap 2
+    encrypted_in_transit: false
+    authenticated: true
+    authorized: true
     assets: [application-data, database-credentials]

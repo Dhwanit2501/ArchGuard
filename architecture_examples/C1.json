@@ -39,7 +39,10 @@
       "trust_zone": "internet",
       "internet_facing": true,
       "properties": {
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -50,8 +53,10 @@
       "internet_facing": true,
       "cloud_service": "igw",
       "properties": {
-        "internet_facing": true,
-        "logging": true
+        "logging": true,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -65,7 +70,10 @@
         "type": "application",
         "multi_az": true,
         "health_checks": true,
-        "logging": true
+        "logging": true,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -78,7 +86,9 @@
       "properties": {
         "availability_zone": "az-1",
         "instance_type": "ec2",
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false
       }
     },
     {
@@ -91,7 +101,9 @@
       "properties": {
         "availability_zone": "az-2",
         "instance_type": "ec2",
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false
       }
     },
     {
@@ -107,7 +119,8 @@
           "web-server-2"
         ],
         "permissions": [],
-        "logging": true
+        "logging": true,
+        "over_privileged": false
       }
     },
     {
@@ -160,6 +173,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": false,
+      "authorized": false,
       "assets": [
         "user-requests"
       ]
@@ -173,6 +187,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": true,
       "authenticated": false,
+      "authorized": false,
       "assets": [
         "user-requests"
       ]
@@ -186,6 +201,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "properties": {
         "load_balanced": true
       }
@@ -199,6 +215,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "properties": {
         "load_balanced": true
       }
@@ -212,6 +229,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": true,
       "authenticated": true,
+      "authorized": true,
       "flow_type": "assumes-role",
       "assets": [
         "iam-credentials"
@@ -226,6 +244,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": true,
       "authenticated": true,
+      "authorized": true,
       "flow_type": "assumes-role",
       "assets": [
         "iam-credentials"
@@ -241,6 +260,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": true,
+      "authorized": true,
       "assets": [
         "application-data",
         "database-credentials"
@@ -256,6 +276,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": true,
+      "authorized": true,
       "assets": [
         "application-data",
         "database-credentials"

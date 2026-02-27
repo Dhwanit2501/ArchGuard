@@ -31,10 +31,16 @@
       "type": "web-application",
       "trust_zone": "frontend",
       "internet_facing": true,
-      "technologies": ["react", "vue"],
+      "technologies": [
+        "react",
+        "vue"
+      ],
       "properties": {
         "handles_user_input": true,
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -43,10 +49,16 @@
       "type": "mobile-application",
       "trust_zone": "frontend",
       "internet_facing": true,
-      "technologies": ["ios", "android"],
+      "technologies": [
+        "ios",
+        "android"
+      ],
       "properties": {
         "handles_user_input": true,
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -60,7 +72,9 @@
         "routing": true,
         "rate_limiting": true,
         "entry_point": true,
-        "logging": true
+        "logging": true,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -73,7 +87,9 @@
         "handles_authentication": true,
         "handles_identity": true,
         "issues_tokens": true,
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false
       }
     },
     {
@@ -85,7 +101,9 @@
       "properties": {
         "business_logic": true,
         "handles_transactions": true,
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false
       }
     },
     {
@@ -97,7 +115,9 @@
       "properties": {
         "product_data": true,
         "stock_management": true,
-        "logging": false
+        "logging": false,
+        "resource_limits": false,
+        "over_privileged": false
       }
     },
     {
@@ -106,7 +126,9 @@
       "type": "database",
       "trust_zone": "data-layer",
       "internet_facing": false,
-      "technologies": ["postgresql"],
+      "technologies": [
+        "postgresql"
+      ],
       "properties": {
         "stores_credentials": true,
         "stores_pii": true,
@@ -120,7 +142,9 @@
       "type": "database",
       "trust_zone": "data-layer",
       "internet_facing": false,
-      "technologies": ["nosql"],
+      "technologies": [
+        "nosql"
+      ],
       "properties": {
         "stores_transactions": true,
         "encrypted_at_rest": false,
@@ -133,7 +157,9 @@
       "type": "database",
       "trust_zone": "data-layer",
       "internet_facing": false,
-      "technologies": ["sql"],
+      "technologies": [
+        "sql"
+      ],
       "properties": {
         "stores_product_data": true,
         "encrypted_at_rest": false,
@@ -142,11 +168,31 @@
     }
   ],
   "assets": [
-    {"id": "user-credentials", "name": "User Credentials", "sensitivity": "critical"},
-    {"id": "user-pii", "name": "User PII", "sensitivity": "high"},
-    {"id": "order-data", "name": "Order/Transaction Data", "sensitivity": "high"},
-    {"id": "product-data", "name": "Product/Inventory Data", "sensitivity": "medium"},
-    {"id": "auth-tokens", "name": "Authentication Tokens", "sensitivity": "critical"}
+    {
+      "id": "user-credentials",
+      "name": "User Credentials",
+      "sensitivity": "critical"
+    },
+    {
+      "id": "user-pii",
+      "name": "User PII",
+      "sensitivity": "high"
+    },
+    {
+      "id": "order-data",
+      "name": "Order/Transaction Data",
+      "sensitivity": "high"
+    },
+    {
+      "id": "product-data",
+      "name": "Product/Inventory Data",
+      "sensitivity": "medium"
+    },
+    {
+      "id": "auth-tokens",
+      "name": "Authentication Tokens",
+      "sensitivity": "critical"
+    }
   ],
   "data_flows": [
     {
@@ -160,7 +206,11 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": false,
-      "assets": ["user-credentials", "auth-tokens"]
+      "authorized": false,
+      "assets": [
+        "user-credentials",
+        "auth-tokens"
+      ]
     },
     {
       "id": "df2",
@@ -173,7 +223,11 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": false,
-      "assets": ["user-credentials", "auth-tokens"]
+      "authorized": false,
+      "assets": [
+        "user-credentials",
+        "auth-tokens"
+      ]
     },
     {
       "id": "df3",
@@ -184,7 +238,10 @@
       "crosses_boundary": false,
       "encrypted_in_transit": false,
       "authenticated": true,
-      "assets": ["user-credentials"]
+      "authorized": false,
+      "assets": [
+        "user-credentials"
+      ]
     },
     {
       "id": "df4",
@@ -195,7 +252,10 @@
       "crosses_boundary": false,
       "encrypted_in_transit": false,
       "authenticated": true,
-      "assets": ["order-data"]
+      "authorized": false,
+      "assets": [
+        "order-data"
+      ]
     },
     {
       "id": "df5",
@@ -206,11 +266,14 @@
       "crosses_boundary": false,
       "encrypted_in_transit": false,
       "authenticated": true,
-      "assets": ["product-data"]
+      "authorized": false,
+      "assets": [
+        "product-data"
+      ]
     },
     {
       "id": "df6",
-      "name": "Auth to Order (S2S)",
+      "name": "Auth to Order",
       "source": "auth-service",
       "destination": "order-service",
       "protocol": "grpc",
@@ -218,13 +281,14 @@
       "crosses_boundary": false,
       "encrypted_in_transit": true,
       "authenticated": true,
+      "authorized": true,
       "properties": {
         "service_mesh": true
       }
     },
     {
       "id": "df7",
-      "name": "Order to Inventory (S2S)",
+      "name": "Order to Inventory",
       "source": "order-service",
       "destination": "inventory-service",
       "protocol": "grpc",
@@ -232,6 +296,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": true,
       "authenticated": true,
+      "authorized": true,
       "properties": {
         "service_mesh": true
       }
@@ -246,7 +311,11 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": true,
-      "assets": ["user-credentials", "user-pii"]
+      "authorized": true,
+      "assets": [
+        "user-credentials",
+        "user-pii"
+      ]
     },
     {
       "id": "df9",
@@ -258,7 +327,10 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": true,
-      "assets": ["order-data"]
+      "authorized": true,
+      "assets": [
+        "order-data"
+      ]
     },
     {
       "id": "df10",
@@ -270,7 +342,10 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": true,
-      "assets": ["product-data"]
+      "authorized": true,
+      "assets": [
+        "product-data"
+      ]
     }
   ]
 }

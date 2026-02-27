@@ -4,7 +4,8 @@
     "name": "ReAct Agent Pattern",
     "id": "react-agent",
     "architecture_type": "agentic-ai",
-    "pattern": "react"
+    "pattern": "react",
+    "human_oversight": false
   },
   "trust_zones": [
     {
@@ -30,6 +31,12 @@
       "name": "Environment",
       "trust_level": "low",
       "description": "External world state"
+    },
+    {
+      "id": "storage",
+      "name": "Storage",
+      "trust_level": "high",
+      "description": "Agent memory and knowledge storage"
     }
   ],
   "components": [
@@ -40,7 +47,10 @@
       "trust_zone": "user",
       "internet_facing": true,
       "properties": {
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -51,7 +61,10 @@
       "internet_facing": true,
       "properties": {
         "user_input": true,
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -64,7 +77,15 @@
         "role": "reasoning",
         "planning": true,
         "tool_selection": true,
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false,
+        "input_validation": false,
+        "rate_limiting": false,
+        "content_policy": false,
+        "integrity_verification": false,
+        "dependency_verification": false,
+        "output_filtering": false
       },
       "agentic_properties": {
         "thought_generation": true,
@@ -80,7 +101,18 @@
       "properties": {
         "code_execution": true,
         "api_calls": true,
-        "logging": true
+        "logging": true,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false,
+        "resource_limits": false,
+        "over_privileged": true,
+        "tool_scope_restrictions": false,
+        "tool_allowlist": false,
+        "sandboxed": false,
+        "integrity_verification": false,
+        "dependency_verification": false,
+        "output_filtering": false
       }
     },
     {
@@ -92,7 +124,10 @@
       "properties": {
         "world_state": true,
         "observable": true,
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     },
     {
@@ -104,7 +139,32 @@
       "properties": {
         "role": "generation",
         "response_synthesis": true,
-        "logging": true
+        "logging": true,
+        "resource_limits": false,
+        "over_privileged": false,
+        "input_validation": false,
+        "rate_limiting": false,
+        "content_policy": false,
+        "integrity_verification": false,
+        "dependency_verification": false,
+        "output_filtering": false
+      }
+    },
+    {
+      "id": "vector-store",
+      "name": "Vector Store",
+      "type": "vector-store",
+      "trust_zone": "storage",
+      "internet_facing": false,
+      "properties": {
+        "encrypted_at_rest": false,
+        "logging": true,
+        "rate_limiting": false,
+        "resource_limits": false,
+        "input_validation": false,
+        "access_controls": false,
+        "stores_pii": false,
+        "stores_credentials": false
       }
     },
     {
@@ -114,7 +174,10 @@
       "trust_zone": "user",
       "internet_facing": true,
       "properties": {
-        "logging": false
+        "logging": false,
+        "rate_limiting": false,
+        "ddos_protection": false,
+        "waf_enabled": false
       }
     }
   ],
@@ -141,6 +204,12 @@
       "id": "environment-state",
       "name": "Environment State",
       "sensitivity": "medium"
+    },
+    {
+      "id": "knowledge-base",
+      "name": "Knowledge Base",
+      "sensitivity": "high",
+      "description": "Indexed documents and embeddings in vector store"
     }
   ],
   "data_flows": [
@@ -152,7 +221,8 @@
       "protocol": "user-input",
       "crosses_boundary": false,
       "encrypted_in_transit": false,
-      "authenticated": false
+      "authenticated": false,
+      "authorized": false
     },
     {
       "id": "df2",
@@ -163,6 +233,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "assets": [
         "user-query"
       ],
@@ -179,6 +250,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "flow_type": "action",
       "assets": [
         "reasoning-chain"
@@ -197,6 +269,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": true,
+      "authorized": true,
       "flow_type": "action",
       "threats": [
         "unintended-side-effects"
@@ -211,6 +284,7 @@
       "crosses_boundary": true,
       "encrypted_in_transit": true,
       "authenticated": false,
+      "authorized": false,
       "flow_type": "observation",
       "assets": [
         "tool-results",
@@ -230,6 +304,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "flow_type": "iteration",
       "properties": {
         "max_iterations": 10,
@@ -245,6 +320,7 @@
       "crosses_boundary": false,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "assets": [
         "reasoning-chain"
       ]
@@ -257,7 +333,8 @@
       "protocol": "internal",
       "crosses_boundary": false,
       "encrypted_in_transit": false,
-      "authenticated": false
+      "authenticated": false,
+      "authorized": false
     },
     {
       "id": "df9",
@@ -268,8 +345,39 @@
       "crosses_boundary": true,
       "encrypted_in_transit": false,
       "authenticated": false,
+      "authorized": false,
       "threats": [
         "sensitive-data-exposure"
+      ]
+    },
+    {
+      "id": "df10",
+      "name": "Environment to Vector Store",
+      "source": "environment",
+      "destination": "vector-store",
+      "protocol": "internal",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "authorized": false,
+      "input_validation": false,
+      "assets": [
+        "knowledge-base"
+      ]
+    },
+    {
+      "id": "df11",
+      "name": "Vector Store to LLM",
+      "source": "vector-store",
+      "destination": "llm-reason",
+      "protocol": "internal",
+      "crosses_boundary": true,
+      "encrypted_in_transit": false,
+      "authenticated": false,
+      "authorized": false,
+      "input_validation": false,
+      "assets": [
+        "knowledge-base"
       ]
     }
   ],

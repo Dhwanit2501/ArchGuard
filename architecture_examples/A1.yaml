@@ -7,6 +7,7 @@ project:
   id: "react-agent"
   architecture_type: agentic-ai
   pattern: react
+  human_oversight: false
 
 trust_zones:
   - id: user
@@ -29,34 +30,53 @@ trust_zones:
     trust_level: low
     description: "External world state"
 
+  - id: storage
+    name: "Storage"
+    trust_level: high
+    description: "Agent memory and knowledge storage"
+
 components:
   - id: user
     name: "User"
     type: actor
     trust_zone: user
-    internet_facing: true                  # Gap 3
+    internet_facing: true
     properties:
-      logging: false                        # Gap 5
+      logging: false
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   - id: query
     name: "Query"
     type: input
     trust_zone: user
-    internet_facing: true                  # Gap 3: entry point for user input
+    internet_facing: true
     properties:
       user_input: true
-      logging: false                        # Gap 5: queries rarely logged by default
+      logging: false
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   - id: llm-reason
     name: "LLM (Reason)"
     type: llm
     trust_zone: agent
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     properties:
       role: reasoning
       planning: true
       tool_selection: true
-      logging: true                         # Gap 5: reasoning steps should be logged
+      logging: true
+      resource_limits: false
+      over_privileged: false
+      input_validation: false
+      rate_limiting: false
+      content_policy: false
+      integrity_verification: false
+      dependency_verification: false
+      output_filtering: false
     agentic_properties:
       thought_generation: true
       action_selection: true
@@ -65,39 +85,79 @@ components:
     name: "Tools"
     type: tool-executor
     trust_zone: tools
-    internet_facing: true                  # Gap 3: tools often call external APIs
+    internet_facing: true
     properties:
       code_execution: true
       api_calls: true
-      logging: true                         # Gap 5: tool calls must be logged
+      logging: true
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
+      resource_limits: false
+      over_privileged: true
+      tool_scope_restrictions: false
+      tool_allowlist: false
+      sandboxed: false
+      integrity_verification: false
+      dependency_verification: false
+      output_filtering: false
 
   - id: environment
     name: "Environment"
     type: external-system
     trust_zone: environment
-    internet_facing: true                  # Gap 3: external world
+    internet_facing: true
     properties:
       world_state: true
       observable: true
-      logging: false                        # Gap 5: external env not under our control
+      logging: false
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
   - id: llm-generate
     name: "LLM (Generate)"
     type: llm
     trust_zone: agent
-    internet_facing: false                 # Gap 3
+    internet_facing: false
     properties:
       role: generation
       response_synthesis: true
-      logging: true                         # Gap 5
+      logging: true
+      resource_limits: false
+      over_privileged: false
+      input_validation: false
+      rate_limiting: false
+      content_policy: false
+      integrity_verification: false
+      dependency_verification: false
+      output_filtering: false
+
+  - id: vector-store
+    name: "Vector Store"
+    type: vector-store
+    trust_zone: storage
+    internet_facing: false
+    properties:
+      encrypted_at_rest: false
+      logging: true
+      rate_limiting: false
+      resource_limits: false
+      input_validation: false
+      access_controls: false
+      stores_pii: false
+      stores_credentials: false
 
   - id: response
     name: "Response"
     type: output
     trust_zone: user
-    internet_facing: true                  # Gap 3: output reaches the user
+    internet_facing: true
     properties:
-      logging: false                        # Gap 5
+      logging: false
+      rate_limiting: false
+      ddos_protection: false
+      waf_enabled: false
 
 assets:
   - id: user-query
@@ -119,16 +179,21 @@ assets:
     name: "Environment State"
     sensitivity: medium
 
+  - id: knowledge-base
+    name: "Knowledge Base"
+    sensitivity: high
+    description: "Indexed documents and embeddings in vector store"
+
 data_flows:
-  # User Query to Reasoning LLM
   - id: df1
     name: "User Query"
     source: user
     destination: query
     protocol: user-input
     crosses_boundary: false
-    encrypted_in_transit: false            # Gap 1: raw user input, not encrypted
-    authenticated: false                   # Gap 2: unauthenticated user input
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
 
   - id: df2
     name: "Query to Reason"
@@ -136,21 +201,22 @@ data_flows:
     destination: llm-reason
     protocol: internal
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1
-    authenticated: false                   # Gap 2: prompt is passed without auth
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     assets: [user-query]
     threats:
       - direct-prompt-injection
 
-  # ReAct Loop: Reason → Tools → Environment → Reason
   - id: df3
     name: "Action (Tool Call)"
     source: llm-reason
     destination: tools
     protocol: function-call
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1
-    authenticated: false                   # Gap 2: tool calls often lack auth checks
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     flow_type: action
     assets: [reasoning-chain]
     threats:
@@ -163,8 +229,9 @@ data_flows:
     destination: environment
     protocol: external
     crosses_boundary: true
-    encrypted_in_transit: true             # Gap 1: external calls should use TLS
-    authenticated: true                    # Gap 2: external APIs use API keys
+    encrypted_in_transit: true
+    authenticated: true
+    authorized: true
     flow_type: action
     threats:
       - unintended-side-effects
@@ -175,37 +242,38 @@ data_flows:
     destination: llm-reason
     protocol: internal
     crosses_boundary: true
-    encrypted_in_transit: true             # Gap 1
-    authenticated: false                   # Gap 2: returned data not verified
+    encrypted_in_transit: true
+    authenticated: false
+    authorized: false
     flow_type: observation
     assets: [tool-results, environment-state]
     threats:
       - indirect-prompt-injection
       - data-poisoning
 
-  # Loop back (iterative reasoning)
   - id: df6
     name: "Reasoning Loop"
     source: llm-reason
     destination: llm-reason
     protocol: internal
     crosses_boundary: false
-    encrypted_in_transit: false            # Gap 1: internal self-loop
-    authenticated: false                   # Gap 2: self-loop
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     flow_type: iteration
     properties:
       max_iterations: 10
       stop_condition: task-complete
 
-  # Final Response Generation
   - id: df7
     name: "Generate Response"
     source: llm-reason
     destination: llm-generate
     protocol: internal
     crosses_boundary: false
-    encrypted_in_transit: false            # Gap 1: internal agent flow
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     assets: [reasoning-chain]
 
   - id: df8
@@ -214,8 +282,9 @@ data_flows:
     destination: response
     protocol: internal
     crosses_boundary: false
-    encrypted_in_transit: false            # Gap 1
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
 
   - id: df9
     name: "Response to User"
@@ -223,12 +292,38 @@ data_flows:
     destination: user
     protocol: user-output
     crosses_boundary: true
-    encrypted_in_transit: false            # Gap 1: depends on transport
-    authenticated: false                   # Gap 2
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
     threats:
       - sensitive-data-exposure
 
-# ReAct Pattern Specific
+  # RAG flows - environment feeds into vector store (poisoning risk)
+  - id: df10
+    name: "Environment to Vector Store"
+    source: environment
+    destination: vector-store
+    protocol: internal
+    crosses_boundary: true
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
+    input_validation: false
+    assets: [knowledge-base]
+
+  # LLM retrieves from vector store (exfiltration and tampering risk)
+  - id: df11
+    name: "Vector Store to LLM"
+    source: vector-store
+    destination: llm-reason
+    protocol: internal
+    crosses_boundary: true
+    encrypted_in_transit: false
+    authenticated: false
+    authorized: false
+    input_validation: false
+    assets: [knowledge-base]
+
 react_pattern:
   loop_structure:
     - thought: "LLM reasons about the task"
