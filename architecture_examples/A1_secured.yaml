@@ -1,0 +1,325 @@
+archguard_version: 1.0.0
+project:
+  name: ReAct Agent Pattern (Secured)
+  id: react-agent-secured
+  architecture_type: agentic-ai
+  pattern: react
+  human_oversight: true
+trust_zones:
+- id: user
+  name: User
+  trust_level: untrusted
+  description: External user input
+- id: agent
+  name: Agent
+  trust_level: medium
+  description: LLM reasoning and generation
+- id: tools
+  name: Tools
+  trust_level: low
+  description: External tool execution
+- id: environment
+  name: Environment
+  trust_level: low
+  description: External world state
+- id: storage
+  name: Storage
+  trust_level: high
+  description: Agent memory and knowledge storage
+components:
+- id: user
+  name: User
+  type: actor
+  trust_zone: user
+  internet_facing: true
+  properties:
+    logging: true
+    rate_limiting: true
+    ddos_protection: true
+    waf_enabled: true
+- id: query
+  name: Query
+  type: input
+  trust_zone: user
+  internet_facing: true
+  properties:
+    user_input: true
+    logging: true
+    rate_limiting: true
+    ddos_protection: true
+    waf_enabled: true
+- id: llm-reason
+  name: LLM (Reason)
+  type: llm
+  trust_zone: agent
+  internet_facing: false
+  properties:
+    role: reasoning
+    planning: true
+    tool_selection: true
+    logging: true
+    resource_limits: true
+    over_privileged: false
+    input_validation: true
+    rate_limiting: true
+    content_policy: true
+    integrity_verification: true
+    dependency_verification: true
+    output_filtering: true
+    container_image_verification: true
+    evaluation_integrity: true
+    log_sanitization: true
+    audit_log_integrity: true
+    compliance_controls: true
+    explainability: true
+    agent_identity_verification: true
+  agentic_properties:
+    thought_generation: true
+    action_selection: true
+- id: tools
+  name: Tools
+  type: tool-executor
+  trust_zone: tools
+  internet_facing: true
+  properties:
+    code_execution: true
+    api_calls: true
+    logging: true
+    rate_limiting: true
+    ddos_protection: true
+    waf_enabled: true
+    resource_limits: true
+    over_privileged: false
+    tool_scope_restrictions: true
+    tool_allowlist: true
+    sandboxed: true
+    integrity_verification: true
+    dependency_verification: true
+    output_filtering: true
+    input_validation: true
+    container_image_verification: true
+    evaluation_integrity: true
+    log_sanitization: true
+    audit_log_integrity: true
+    compliance_controls: true
+    access_controls: true
+- id: environment
+  name: Environment
+  type: external-system
+  trust_zone: environment
+  internet_facing: true
+  properties:
+    world_state: true
+    observable: true
+    logging: true
+    rate_limiting: true
+    ddos_protection: true
+    waf_enabled: true
+- id: llm-generate
+  name: LLM (Generate)
+  type: llm
+  trust_zone: agent
+  internet_facing: false
+  properties:
+    role: generation
+    response_synthesis: true
+    logging: true
+    resource_limits: true
+    over_privileged: false
+    input_validation: true
+    rate_limiting: true
+    content_policy: true
+    integrity_verification: true
+    dependency_verification: true
+    output_filtering: true
+    container_image_verification: true
+    evaluation_integrity: true
+    log_sanitization: true
+    audit_log_integrity: true
+    compliance_controls: true
+    explainability: true
+    agent_identity_verification: true
+- id: vector-store
+  name: Vector Store
+  type: vector-store
+  trust_zone: storage
+  internet_facing: false
+  properties:
+    encrypted_at_rest: true
+    logging: true
+    rate_limiting: true
+    resource_limits: true
+    input_validation: true
+    access_controls: true
+    container_image_verification: true
+    evaluation_integrity: true
+    log_sanitization: true
+    audit_log_integrity: true
+    compliance_controls: true
+    stores_pii: false
+    stores_credentials: false
+    output_filtering: true
+    integrity_verification: true
+    dependency_verification: true
+- id: response
+  name: Response
+  type: output
+  trust_zone: user
+  internet_facing: true
+  properties:
+    logging: true
+    rate_limiting: true
+    ddos_protection: true
+    waf_enabled: true
+assets:
+- id: user-query
+  name: User Query
+  sensitivity: medium
+  risk: prompt-injection
+- id: reasoning-chain
+  name: Reasoning Chain
+  sensitivity: medium
+  description: Thought-Action-Observation sequence
+- id: tool-results
+  name: Tool Results
+  sensitivity: high
+  risk: indirect-injection
+- id: environment-state
+  name: Environment State
+  sensitivity: medium
+- id: knowledge-base
+  name: Knowledge Base
+  sensitivity: high
+  description: Indexed documents and embeddings in vector store
+data_flows:
+- id: df1
+  name: User Query
+  source: user
+  destination: query
+  protocol: user-input
+  crosses_boundary: false
+  encrypted_in_transit: true
+  authenticated: false
+  authorized: false
+- id: df2
+  name: Query to Reason
+  source: query
+  destination: llm-reason
+  protocol: internal
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  assets:
+  - user-query
+- id: df3
+  name: Action (Tool Call)
+  source: llm-reason
+  destination: tools
+  protocol: function-call
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  flow_type: action
+  assets:
+  - reasoning-chain
+- id: df4
+  name: Tool Execution
+  source: tools
+  destination: environment
+  protocol: external
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  flow_type: action
+- id: df5
+  name: Observation (Result)
+  source: environment
+  destination: llm-reason
+  protocol: internal
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  flow_type: observation
+  assets:
+  - tool-results
+  - environment-state
+- id: df6
+  name: Reasoning Loop
+  source: llm-reason
+  destination: llm-reason
+  protocol: internal
+  crosses_boundary: false
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  flow_type: iteration
+  properties:
+    max_iterations: 10
+    stop_condition: task-complete
+- id: df7
+  name: Generate Response
+  source: llm-reason
+  destination: llm-generate
+  protocol: internal
+  crosses_boundary: false
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  assets:
+  - reasoning-chain
+- id: df8
+  name: Final Response
+  source: llm-generate
+  destination: response
+  protocol: internal
+  crosses_boundary: false
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+- id: df9
+  name: Response to User
+  source: response
+  destination: user
+  protocol: user-output
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: false
+  authorized: false
+- id: df10
+  name: Environment to Vector Store
+  source: environment
+  destination: vector-store
+  protocol: internal
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  input_validation: true
+  assets:
+  - knowledge-base
+- id: df11
+  name: Vector Store to LLM
+  source: vector-store
+  destination: llm-reason
+  protocol: internal
+  crosses_boundary: true
+  encrypted_in_transit: true
+  authenticated: true
+  authorized: true
+  input_validation: true
+  assets:
+  - knowledge-base
+react_pattern:
+  loop_structure:
+  - thought: LLM reasons about the task
+  - action: LLM selects and invokes a tool
+  - observation: Tool returns result from environment
+  - repeat: Until task is complete or max iterations
+  termination_conditions:
+  - task_complete: true
+  - max_iterations: 10
+  - error_threshold: 3

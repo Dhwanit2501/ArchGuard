@@ -50,7 +50,10 @@ from Threat_Engine.STRIDE import Elevation_of_privilege as elevation_of_privileg
 from Threat_Engine.MAESTRO import L1_Foundation as layer1_foundation
 from Threat_Engine.MAESTRO import L2_Data as layer2_data
 from Threat_Engine.MAESTRO import L3_Agent as layer3_framework
-
+from Threat_Engine.MAESTRO import L4_Deployment_Infra as layer4_infra
+from Threat_Engine.MAESTRO import L5_Eval_Obsv as layer5_observability
+from Threat_Engine.MAESTRO import L6_Security_Compliance as layer6_security
+from Threat_Engine.MAESTRO import L7_Agent_Ecosystem as layer7_ecosystem
 # Component type sets
 AI_COMPONENT_TYPES = {"llm", "agent", "tool-executor", "vector-store", "memory-store"}
 
@@ -156,10 +159,10 @@ def run_engine(arch_path: str, backend: str = "networkx") -> dict:
         maestro_threats += layer1_foundation.run(graph, arch)
         maestro_threats += layer2_data.run(graph, arch)
         maestro_threats += layer3_framework.run(graph, arch)
-        # maestro_threats += layer4_infra.run(graph, arch)
-        # maestro_threats += layer5_observability.run(graph, arch)
-        # maestro_threats += layer6_security.run(graph, arch)
-        # maestro_threats += layer7_ecosystem.run(graph, arch)
+        maestro_threats += layer4_infra.run(graph, arch)
+        maestro_threats += layer5_observability.run(graph, arch)
+        maestro_threats += layer6_security.run(graph, arch)
+        maestro_threats += layer7_ecosystem.run(graph, arch)
 
     # 6. Deduplicate
     all_threats = stride_threats + maestro_threats

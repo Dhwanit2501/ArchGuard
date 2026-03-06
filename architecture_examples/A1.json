@@ -85,7 +85,14 @@
         "content_policy": false,
         "integrity_verification": false,
         "dependency_verification": false,
-        "output_filtering": false
+        "output_filtering": false,
+        "container_image_verification": false,
+        "evaluation_integrity": false,
+        "log_sanitization": false,
+        "audit_log_integrity": false,
+        "compliance_controls": false,
+        "explainability": false,
+        "agent_identity_verification": false
       },
       "agentic_properties": {
         "thought_generation": true,
@@ -112,7 +119,12 @@
         "sandboxed": false,
         "integrity_verification": false,
         "dependency_verification": false,
-        "output_filtering": false
+        "output_filtering": false,
+        "container_image_verification": false,
+        "evaluation_integrity": false,
+        "log_sanitization": false,
+        "audit_log_integrity": false,
+        "compliance_controls": false
       }
     },
     {
@@ -147,7 +159,14 @@
         "content_policy": false,
         "integrity_verification": false,
         "dependency_verification": false,
-        "output_filtering": false
+        "output_filtering": false,
+        "container_image_verification": false,
+        "evaluation_integrity": false,
+        "log_sanitization": false,
+        "audit_log_integrity": false,
+        "compliance_controls": false,
+        "explainability": false,
+        "agent_identity_verification": false
       }
     },
     {
@@ -163,6 +182,11 @@
         "resource_limits": false,
         "input_validation": false,
         "access_controls": false,
+        "container_image_verification": false,
+        "evaluation_integrity": false,
+        "log_sanitization": false,
+        "audit_log_integrity": false,
+        "compliance_controls": false,
         "stores_pii": false,
         "stores_credentials": false
       }

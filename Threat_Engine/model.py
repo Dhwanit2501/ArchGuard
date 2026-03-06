@@ -12,10 +12,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 
-# ─────────────────────────────────────────────
-# Enums
-# ─────────────────────────────────────────────
-
 class Severity(str, Enum):
     CRITICAL = "Critical"
     HIGH     = "High"
@@ -48,10 +44,6 @@ class MaestroLayer(str, Enum):
     L6_SECURITY         = "MAESTRO-L6: Security & Compliance"
     L7_ECOSYSTEM        = "MAESTRO-L7: Agent Ecosystem"
 
-
-# ─────────────────────────────────────────────
-# Threat dataclass
-# ─────────────────────────────────────────────
 
 @dataclass
 class Threat:
@@ -88,10 +80,6 @@ class Threat:
     assets           : list[str]           = field(default_factory=list)
     attck_techniques : list[str]           = field(default_factory=list)
 
-
-# ─────────────────────────────────────────────
-# Severity utilities
-# ─────────────────────────────────────────────
 
 # Asset sensitivity → severity bump
 SENSITIVITY_SEVERITY = {
@@ -159,3 +147,97 @@ def calculate_severity(
 def higher_severity(a: Severity, b: Severity) -> Severity:
     """Return the higher of two severities."""
     return a if a >= b else b
+
+
+# Dry Run
+
+# Component level working
+
+# Component: inventory-service
+
+# trust_zone: microservices
+# Microservices trust level = medium
+# logging: false
+# resource_limits: false
+
+# Example threat identified: Logging disabled on business logic service
+
+# STRIDE Category - Repudiation
+# Base Severity - Low
+# Assets involved - none directly
+# Trust Level - medium
+
+# Severity calculation:
+
+# Base - low
+# Trust bump = +0 (since trust level is medium)
+
+# Therefore still the severity is LOW
+
+# we get something like this 
+
+# Threat(
+#     id="T-101",
+#     component="inventory-service",
+#     category=StrideCategory.REPUDIATION,
+#     subcategory="Logging Disabled",
+#     severity=Severity.LOW,
+#     description="Inventory service lacks logging, reducing traceability of actions.",
+#     sources=["STRIDE"],
+#     root_cause="logging=False"
+# )
+
+# Data flow level working
+
+# df9 - Order to Order DB 
+
+# details:
+
+# encrypted_in_transit: false
+# crosses_boundary: true
+# Assets: [order-data]
+# order-data sensitivity = high
+# Source: order-service
+# Destination: order-db
+# Data layer trust = trusted
+
+# threat identified : Unencrypted database connection carrying sensitive transaction data
+
+# STRIDE Category - Information Disclosure
+# Base Severity - Medium
+
+# Severity calculation:
+
+# Base - Medium
+# Trust bump = +0 (since trust level is trusted)
+
+# Therefore still the severity is Medium
+
+# Now considering assest senstivity
+
+# Asset = order-data
+# Sensitivity = high
+
+# If highest >= HIGH and severity < Critical , we need to bump +1
+
+# So final severity changes from Medium to High
+
+
+# We can see something like this 
+
+# Threat(
+#     id="T-202",
+#     component="order-db",
+#     category=StrideCategory.INFORMATION_DISCLOSURE,
+#     subcategory="Unencrypted Database Connection",
+#     severity=Severity.HIGH,
+#     description="Order service communicates with Order DB without encryption while transmitting high-sensitivity transaction data.",
+#     sources=["STRIDE"],
+#     root_cause="encrypted_in_transit=False",
+#     data_flow="df9",
+#     assets=["order-data"]
+# )
+
+# So it basically models : Risk = Likelihood (base severity + trust bump (increases based on trust level (exposure))) * Impact (asset sensitivity)
+
+# It basically does Qualitative multiplication
