@@ -84,6 +84,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"container_image_verification=False|infra|component={node['id']}",
+                suggested_techniques = ["AML.T0018", "AML.T0080", "AML.T0099"],
                 mitigations   = [
                     "Implement cryptographic verification of all container images before deployment",
                     "Use signed container images from trusted registries only",
@@ -120,6 +121,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"access_controls=False|infra|component={node['id']}",
+                suggested_techniques = ["AML.T0053", "AML.T0012", "AML.T0091"],
                 mitigations   = [
                     "Implement RBAC on all orchestration systems managing AI components",
                     "Apply least-privilege principles to orchestration service accounts",
@@ -155,6 +157,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"integrity_verification=False|infra|component={node['id']}",
+                suggested_techniques = ["AML.T0018", "AML.T0103"],
                 mitigations   = [
                     "Implement integrity verification and signing for all IaC scripts",
                     "Use policy-as-code tools (e.g. OPA, Checkov) to validate IaC before apply",
@@ -187,6 +190,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"resource_limits=False|rate_limiting=False|infra|component={node['id']}",
+                suggested_techniques = ["AML.T0029", "AML.T0046"],
                 mitigations   = [
                     "Define CPU, memory, and network resource limits for all AI infrastructure components",
                     "Implement auto-scaling with hard upper bounds to prevent resource exhaustion",
@@ -221,6 +225,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"logging=False|infra|component={node['id']}",
+                suggested_techniques = ["AML.T0034", "AML.T0053"],
                 mitigations   = [
                     "Implement continuous logging on all AI infrastructure components",
                     "Alert on unexpected spikes in CPU, GPU, memory, or network usage",

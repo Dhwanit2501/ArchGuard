@@ -52,7 +52,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         node_zone   = zone_lookup.get(node.get("trust_zone", ""), {})
         trust_level = node_zone.get("trust_level", "medium")
 
-        # ── M3-01: No input validation (Input Validation Attacks) ──────
+        # M3-01: No input validation (Input Validation Attacks)
         #
         # MAESTRO L3: Input Validation Attacks — exploiting weaknesses in
         # how the AI framework handles user inputs, allowing for code
@@ -95,6 +95,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"input_validation=False|untrusted_input|framework|component={node['id']}",
+                suggested_techniques = ["AML.T0093", "AML.T0080", "AML.T0053"],
                 mitigations  = [
                     "Implement strict input validation on all framework entry points",
                     "Sanitize and normalize all user inputs before passing to framework",
@@ -103,7 +104,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M3-02: No rate limiting or resource limits (DoS on Framework APIs) ──
+        # M3-02: No rate limiting or resource limits (DoS on Framework APIs)
         #
         # MAESTRO L3: Denial of Service on Framework APIs — disrupting the AI
         # framework's ability to function, overloading services and preventing
@@ -138,6 +139,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"rate_limiting=False|resource_limits=False|framework|component={node['id']}",
+                suggested_techniques = ["AML.T0029", "AML.T0046"],
                 mitigations  = [
                     "Implement rate limiting on all framework API endpoints",
                     "Define resource consumption limits per request and per session",
@@ -146,7 +148,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M3-03: No integrity verification (Compromised Framework Components) ──
+        # M3-03: No integrity verification (Compromised Framework Components)
         #
         # MAESTRO L3: Compromised Framework Components — malicious code in
         # libraries or modules used by AI frameworks, compromising the
@@ -180,6 +182,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"integrity_verification=False|framework|component={node['id']}",
+                suggested_techniques = ["AML.T0018", "AML.T0080", "AML.T0099"],
                 mitigations  = [
                     "Implement cryptographic integrity verification on all framework components",
                     "Use signed package verification for all framework dependencies",
@@ -188,7 +191,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M3-04: No dependency verification (Supply Chain Attacks) ────
+        # M3-04: No dependency verification (Supply Chain Attacks)
         #
         # MAESTRO L3: Supply Chain Attacks — targeting the AI framework's
         # dependencies, compromising software before delivery and distribution,
@@ -222,6 +225,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"dependency_verification=False|framework|component={node['id']}",
+                suggested_techniques = ["AML.T0018", "AML.T0099"],
                 mitigations  = [
                     "Implement software bill of materials (SBOM) for all framework dependencies",
                     "Use dependency scanning tools to detect known vulnerabilities",
@@ -231,7 +235,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M3-05: No output filtering or security controls (Framework Evasion) ──
+        # M3-05: No output filtering or security controls (Framework Evasion)
         #
         # MAESTRO L3: Framework Evasion — AI agents specifically designed to
         # bypass security controls within the framework, using advanced techniques
@@ -265,6 +269,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"output_filtering=False|framework|component={node['id']}",
+                suggested_techniques = ["AML.T0054", "AML.T0015", "AML.T0068", "AML.T0102"],
                 mitigations  = [
                     "Implement output filtering on all framework component outputs",
                     "Define explicit security controls that cannot be bypassed by agent outputs",

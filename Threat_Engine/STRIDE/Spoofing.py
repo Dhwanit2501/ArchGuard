@@ -60,6 +60,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 root_cause  = f"authenticated=False|crosses_boundary=True|flow={edge.get('flow_id')}",
                 data_flow   = edge.get("flow_id"),
                 assets      = assets,
+                suggested_techniques = ["T1190", "T1078", "T1133"],
                 mitigations = [
                     "Implement token-based authentication (JWT / OAuth2)",
                     "Validate identity at every trust boundary crossing",
@@ -99,6 +100,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources     = [SOURCE],
                 root_cause  = f"internet_facing=True|unauthenticated_incoming|component={node['id']}",
+                suggested_techniques = ["T1190", "T1078"],
                 mitigations = [
                     "Require authentication on all internet-facing endpoints",
                     "Implement API key validation or OAuth2 at the entry point",
@@ -139,6 +141,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 sources     = [SOURCE],
                 root_cause  = f"untrusted_direct_access|component={dst}",
                 data_flow   = edge.get("flow_id"),
+                suggested_techniques = ["T1190", "T1133", "T1078"],
                 mitigations = [
                     "Route all external traffic through an API gateway or load balancer",
                     "Remove direct network paths from untrusted zones to internal services",

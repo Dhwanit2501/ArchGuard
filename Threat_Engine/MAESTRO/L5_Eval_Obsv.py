@@ -86,6 +86,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"evaluation_integrity=False|observability|component={node['id']}",
+                suggested_techniques = ["AML.T0043", "AML.T0018"],
                 mitigations   = [
                     "Implement integrity verification on all evaluation datasets and test cases",
                     "Use cryptographically signed evaluation datasets to detect tampering",
@@ -125,6 +126,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"logging=False|observability|component={node['id']}",
+                suggested_techniques = ["AML.T0057", "AML.T0086"],
                 mitigations   = [
                     "Implement comprehensive logging on all AI agent components",
                     "Use tamper-resistant, append-only logging infrastructure",
@@ -167,6 +169,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"resource_limits=False|rate_limiting=False|observability|component={node['id']}",
+                suggested_techniques = ["AML.T0029", "AML.T0046"],
                 mitigations   = [
                     "Define resource limits for all AI components participating in evaluation",
                     "Isolate evaluation infrastructure from production workloads",
@@ -217,6 +220,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"log_sanitization=False|sensitive_assets=True|observability|component={node['id']}",
+                suggested_techniques = ["AML.T0057", "AML.T0085", "AML.T0063"],
                 mitigations   = [
                     "Implement log sanitization to scrub sensitive data before writing to logs",
                     "Apply PII and credential redaction in all logging pipelines",
@@ -254,6 +258,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"audit_log_integrity=False|observability|component={node['id']}",
+                suggested_techniques = ["AML.T0080", "AML.T0070", "AML.T0018"],
                 mitigations   = [
                     "Use append-only, cryptographically signed audit logs for all AI components",
                     "Store audit logs in an immutable, independently secured log store",

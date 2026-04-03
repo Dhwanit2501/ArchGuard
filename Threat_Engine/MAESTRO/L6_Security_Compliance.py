@@ -94,6 +94,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"input_validation=False|security|component={node['id']}",
+                suggested_techniques = ["AML.T0043", "AML.T0080", "AML.T0070"],
                 mitigations   = [
                     "Implement strict input validation on all data fed into AI security agents",
                     "Use integrity verification on operational data sources",
@@ -136,6 +137,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"output_filtering=False|content_policy=False|security|component={node['id']}",
+                suggested_techniques = ["AML.T0054", "AML.T0015", "AML.T0102"],
                 mitigations   = [
                     "Implement output filtering on all AI security agent outputs",
                     "Define and enforce a content policy that prevents security-disabling outputs",
@@ -174,6 +176,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"compliance_controls=False|security|component={node['id']}",
+                suggested_techniques = ["AML.T0057", "AML.T0085"],
                 mitigations   = [
                     "Define and enforce compliance controls aligned with applicable regulations",
                     "Implement data residency and sovereignty controls on AI agent data handling",
@@ -212,6 +215,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources       = [SOURCE],
                 root_cause    = f"explainability=False|security|component={node['id']}",
+                suggested_techniques = ["AML.T0069", "AML.T0084"],
                 mitigations   = [
                     "Implement explainability mechanisms to log reasoning behind security decisions",
                     "Use interpretable model outputs with confidence scores and decision rationale",
@@ -260,6 +264,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"rate_limiting=False|unauthenticated_input=True|security|component={node['id']}",
+                    suggested_techniques = ["AML.T0040", "AML.T0024", "AML.T0005"],
                     mitigations   = [
                         "Implement rate limiting on all LLM inference endpoints",
                         "Require authentication for all access to AI security agent APIs",

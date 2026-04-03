@@ -137,7 +137,9 @@
         "multi_az": true,
         "encrypted_at_rest": true,
         "public_access": false,
-        "logging": true
+        "logging": true,
+        "stores_pii": true,
+        "stores_credentials": true
       }
     }
   ],

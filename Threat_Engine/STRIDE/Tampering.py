@@ -64,6 +64,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             root_cause  = f"encrypted_in_transit=False|crosses_boundary=True|flow={edge.get('flow_id')}",
             data_flow   = edge.get("flow_id"),
             assets      = assets,
+            suggested_techniques = ["T1190", "T1059", "T1651", "T1648"],
             mitigations = [
                 "Enforce TLS/HTTPS on all boundary-crossing flows",
                 "Implement certificate pinning for sensitive communications",
@@ -114,6 +115,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             root_cause  = f"encrypted_in_transit=False|sensitive_assets|flow={edge.get('flow_id')}",
             data_flow   = edge.get("flow_id"),
             assets      = assets,
+            suggested_techniques = ["T1059", "T1190"],
             mitigations = [
                 "Encrypt all flows carrying sensitive data",
                 "Implement data integrity checks (HMAC or digital signatures)",
@@ -153,6 +155,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources     = [SOURCE],
                 root_cause  = f"encrypted_at_rest=False|component={node['id']}",
+                suggested_techniques = ["T1190", "T1133", "T1651"],
                 mitigations = [
                     "Enable encryption at rest using AES-256 or equivalent",
                     "Use cloud provider managed encryption keys (e.g. AWS KMS)",
@@ -191,6 +194,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             sources     = [SOURCE],
             root_cause  = f"encrypted_in_transit=False|internal|flow={edge.get('flow_id')}",
             data_flow   = edge.get("flow_id"),
+            suggested_techniques = ["T1059", "T1021"],
             mitigations = [
                 "Encrypt internal flows with TLS even within trust zones",
                 "Implement a service mesh with mTLS (e.g. Istio, Linkerd)",

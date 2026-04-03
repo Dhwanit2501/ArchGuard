@@ -56,6 +56,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ),
             sources     = [SOURCE],
             root_cause  = f"logging=False|component={node['id']}",
+            suggested_techniques = ["T1078", "T1552"],
             mitigations = [
                 "Enable structured logging on all components",
                 "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
@@ -84,6 +85,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ),
             sources     = [SOURCE],
             root_cause  = f"internet_facing=True|logging=False|component={node['id']}",
+            suggested_techniques = ["T1190", "T1078"],
             mitigations = [
                 "Enable access logging on all internet-facing components",
                 "Log all requests including source IP, method, and response codes",
@@ -131,6 +133,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             root_cause  = f"logging=False|sensitive_assets|component={edge['dst']}",
             data_flow   = edge.get("flow_id"),
             assets      = assets,
+            suggested_techniques = ["T1552", "T1555"],
             mitigations = [
                 "Enable audit logging on all components that handle sensitive data",
                 "Log all read and write operations on sensitive assets",
@@ -166,6 +169,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 sources     = [SOURCE],
                 root_cause  = f"boundary_no_logging|flow={edge.get('flow_id')}",
                 data_flow   = edge.get("flow_id"),
+                suggested_techniques = ["T1078", "T1190","T1133"],
                 mitigations = [
                     "Enable logging on all components involved in boundary-crossing flows",
                     "Log the full request and response metadata at both endpoints",

@@ -68,6 +68,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             root_cause  = f"authenticated=True|authorized=False|flow={edge.get('flow_id')}",
             data_flow   = edge.get("flow_id"),
             assets      = assets,
+            suggested_techniques = ["T1068", "T1078","T1098"],
             mitigations = [
                 "Implement role-based access control (RBAC) or attribute-based access control (ABAC)",
                 "Validate permissions at each service boundary, not just the entry point",
@@ -115,6 +116,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     sources     = [SOURCE],
                     root_cause  = f"stores_credentials=True|low_trust_access|component={node['id']}",
                     data_flow   = edge.get("flow_id"),
+                    suggested_techniques = ["T1555", "T1552","T1212"],
                     mitigations = [
                         "Restrict credential store access to high-trust components only",
                         "Use a dedicated secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault)",
@@ -150,6 +152,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ),
             sources     = [SOURCE],
             root_cause  = f"over_privileged=True|component={node['id']}",
+            suggested_techniques = ["T1068", "T1134","T1098"],
             mitigations = [
                 "Apply principle of least privilege — remove all unnecessary permissions",
                 "Scope IAM roles and service accounts to the minimum required actions",
@@ -204,6 +207,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             sources     = [SOURCE],
             root_cause  = f"internal_no_auth|service_to_service|flow={edge.get('flow_id')}",
             data_flow   = edge.get("flow_id"),
+            suggested_techniques = ["T1068", "T1210","T1078"],
             mitigations = [
                 "Implement mutual TLS (mTLS) for all inter-service communication",
                 "Use service-to-service authentication tokens (e.g. SPIFFE/SPIRE)",

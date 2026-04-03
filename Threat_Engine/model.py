@@ -63,7 +63,8 @@ class Threat:
         mitigations     : list of recommended fixes
         data_flow       : flow id if this is a flow-level threat (None for node-level)
         assets          : sensitive assets involved in this threat
-        attck_techniques: ATT&CK technique IDs (populated later by mapping module)
+        attack_techniques: ATT&CK technique IDs (populated later by mapping module)
+        attack_mapping   : structured mapping [{tactic, technique_id, technique_name, framework, url}]
     """
 
     id               : str
@@ -78,7 +79,9 @@ class Threat:
     maestro_layer    : MaestroLayer | None = None
     data_flow        : str | None          = None
     assets           : list[str]           = field(default_factory=list)
-    attck_techniques : list[str]           = field(default_factory=list)
+    suggested_techniques: list[str]          = field(default_factory=list)
+    attack_techniques : list[str]           = field(default_factory=list)
+    attack_mapping    : list[dict]          = field(default_factory=list)
 
 
 # Asset sensitivity → severity bump

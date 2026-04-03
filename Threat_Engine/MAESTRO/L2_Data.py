@@ -47,7 +47,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         node_zone   = zone_lookup.get(node.get("trust_zone", ""), {})
         trust_level = node_zone.get("trust_level", "medium")
 
-        # ── M2-01: Data store accepts input from untrusted source (Data Poisoning) ──
+        # M2-01: Data store accepts input from untrusted source (Data Poisoning)
         #
         # MAESTRO L2: Data Poisoning — manipulating training data or stored data
         # to compromise AI agent behavior, leading to biased results or unintended
@@ -97,6 +97,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     root_cause   = f"input_validation=False|untrusted_input|data_store|component={node['id']}",
                     data_flow    = edge.get("flow_id"),
                     assets       = assets,
+                    suggested_techniques = ["AML.T0070", "AML.T0043", "AML.T0080", "AML.T0099"],
                     mitigations  = [
                         "Validate and sanitize all data before writing to AI data stores",
                         "Implement provenance tracking — record the source of all stored data",
@@ -105,7 +106,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ],
                 ))
 
-        # ── M2-02: Data store unencrypted or accessible from low trust zone (Data Exfiltration) ──
+        # M2-02: Data store unencrypted or accessible from low trust zone (Data Exfiltration)
         #
         # MAESTRO L2: Data Exfiltration — stealing sensitive AI data stored in
         # databases or data stores, exposing private and confidential information
@@ -148,6 +149,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"encrypted_at_rest=False|access_controls=False|component={node['id']}",
+                suggested_techniques = ["AML.T0085", "AML.T0086", "AML.T0024", "AML.T0057"],
                 mitigations  = [
                     "Enable encryption at rest on all AI data stores",
                     "Implement strict access controls — only authorized components can read",
@@ -156,7 +158,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M2-03: Data store has no rate limiting or resource limits (DoS on Data Infrastructure) ──
+        # M2-03: Data store has no rate limiting or resource limits (DoS on Data Infrastructure)
         #
         # MAESTRO L2: Denial of Service on Data Infrastructure — disrupting access
         # to data needed by AI agents, preventing agent functionality and interrupting
@@ -191,6 +193,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"rate_limiting=False|resource_limits=False|data_store|component={node['id']}",
+                suggested_techniques = ["AML.T0029", "AML.T0046"],
                 mitigations  = [
                     "Implement rate limiting on all data store access endpoints",
                     "Configure resource limits (storage, memory, connections) on data stores",
@@ -199,7 +202,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M2-04: Unencrypted flows to/from data stores (Data Tampering) ──
+        # M2-04: Unencrypted flows to/from data stores (Data Tampering)
         #
         # MAESTRO L2: Data Tampering — modifying AI data in transit or at rest,
         # leading to incorrect agent behavior or inaccurate results within AI systems.
@@ -245,6 +248,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 root_cause   = f"encrypted_in_transit=False|data_store_flow|flow={edge.get('flow_id')}",
                 data_flow    = edge.get("flow_id"),
                 assets       = assets,
+                suggested_techniques = ["AML.T0080", "AML.T0099", "AML.T0018"],
                 mitigations  = [
                     "Enforce TLS encryption on all flows to and from data stores",
                     "Implement data integrity checks (HMAC) on stored and retrieved data",
@@ -252,7 +256,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-    # ── M2-05: RAG pipeline accepts unvalidated data from untrusted sources (Compromised RAG) ──
+    # M2-05: RAG pipeline accepts unvalidated data from untrusted sources (Compromised RAG)
     #
     # MAESTRO L2: Compromised RAG Pipelines — injecting malicious code or data
     # into AI data processing workflows, causing erroneous results or malicious
@@ -302,6 +306,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     sources      = [SOURCE],
                     root_cause   = f"rag_unvalidated_untrusted_input|component={node['id']}",
                     data_flow    = edge.get("flow_id"),
+                    suggested_techniques = ["AML.T0070", "AML.T0071", "AML.T0080"],
                     mitigations  = [
                         "Validate and sanitize all documents before indexing into RAG pipeline",
                         "Implement content filtering on all data entering the vector store",

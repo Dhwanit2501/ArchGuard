@@ -51,7 +51,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         node_zone   = zone_lookup.get(node.get("trust_zone", ""), {})
         trust_level = node_zone.get("trust_level", "medium")
 
-        # ── M1-01: No input validation (Adversarial Examples) ──
+        # M1-01: No input validation (Adversarial Examples)
         # MAESTRO L1: Adversarial Examples — inputs specifically crafted
         # to fool the AI model into making incorrect predictions or behave
         # in unexpected ways, causing instability or incorrect responses.
@@ -84,6 +84,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"input_validation=False|untrusted_input|component={node['id']}",
+                suggested_techniques = ["AML.T0043", "AML.T0093"],
                 mitigations  = [
                     "Implement input validation and sanitization before model invocation",
                     "Use adversarial input detection classifiers at the model boundary",
@@ -92,7 +93,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M1-02: LLM exposed without auth or rate limiting (Model Stealing) ──
+        # M1-02: LLM exposed without auth or rate limiting (Model Stealing)
         # MAESTRO L1: Model Stealing — attackers extracting a copy of the AI
         # model through repeated API queries, resulting in IP theft or
         # competitive disadvantage.
@@ -122,6 +123,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"unauthenticated=True|rate_limiting=False|component={node['id']}",
+                suggested_techniques = ["AML.T0040", "AML.T0024"],
                 mitigations  = [
                     "Require authentication on all LLM inference endpoints",
                     "Implement strict rate limiting per client to prevent bulk querying",
@@ -130,7 +132,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M1-03: No content policy (Reprogramming Attacks) ──
+        # M1-03: No content policy (Reprogramming Attacks)
         # MAESTRO L1: Reprogramming Attacks — repurposing the AI model for
         # a malicious task different from its original intent, manipulating
         # the model for unexpected and harmful uses.
@@ -155,6 +157,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"content_policy=False|component={node['id']}",
+                suggested_techniques = ["AML.T0054", "AML.T0015", "AML.T0068"],
                 mitigations  = [
                     "Define an explicit content policy constraining permitted model tasks",
                     "Enforce policy at the system prompt level",
@@ -163,7 +166,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ],
             ))
 
-        # ── M1-04: No rate limiting or resource controls (Denial of Service) ──
+        # M1-04: No rate limiting or resource controls (Denial of Service)
         # MAESTRO L1: Denial of Service — overwhelming foundation models with
         # computationally expensive queries or adversarially crafted inputs
         # (sponge attacks) to exhaust resources, degrade inference performance,
@@ -192,6 +195,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources      = [SOURCE],
                 root_cause   = f"rate_limiting=False|resource_limits=False|component={node['id']}",
+                suggested_techniques = ["AML.T0029", "AML.T0046"],
                 mitigations  = [
                     "Implement per-client rate limiting on model inference endpoints",
                     "Set maximum token limits per request to prevent expensive queries",

@@ -57,6 +57,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources     = [SOURCE],
                 root_cause  = f"rate_limiting=False|internet_facing=True|component={node['id']}",
+                suggested_techniques = ["T1190", "T1059"],
                 mitigations = [
                     "Implement rate limiting at the API gateway or load balancer",
                     "Configure per-client and per-endpoint request quotas",
@@ -92,6 +93,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources     = [SOURCE],
                 root_cause  = f"ddos_protection=False|waf_enabled=False|component={node['id']}",
+                suggested_techniques = ["T1190"],
                 mitigations = [
                     "Enable cloud provider DDoS protection (e.g. AWS Shield, Azure DDoS Protection)",
                     "Deploy a Web Application Firewall (WAF) for application-layer protection",
@@ -129,6 +131,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 sources     = [SOURCE],
                 root_cause  = f"untrusted_reachable|no_resource_limits|component={edge['dst']}",
                 data_flow   = edge.get("flow_id"),
+                suggested_techniques = ["T1190", "T1133"],
                 mitigations = [
                     "Configure CPU, memory, and connection limits on internal services",
                     "Implement circuit breakers to prevent cascade failures",
@@ -170,6 +173,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 ),
                 sources     = [SOURCE],
                 root_cause  = f"no_message_limits|component={node['id']}",
+                suggested_techniques = ["T1648", "T1059"],
                 mitigations = [
                     "Configure maximum message size limits on the queue",
                     "Set producer rate limits to prevent message flooding",

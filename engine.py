@@ -37,6 +37,7 @@ if "igraph" not in sys.modules:
 from parser import parse_architecture
 from graph.builder import GraphBuilder
 from Threat_Engine.model import Threat, Severity, StrideCategory, MaestroLayer, higher_severity
+from Threat_Engine.Attack_Path.finder import find_attack_paths
 
 # STRIDE rules
 from Threat_Engine.STRIDE import Spoofing as spoofing
@@ -54,6 +55,8 @@ from Threat_Engine.MAESTRO import L4_Deployment_Infra as layer4_infra
 from Threat_Engine.MAESTRO import L5_Eval_Obsv as layer5_observability
 from Threat_Engine.MAESTRO import L6_Security_Compliance as layer6_security
 from Threat_Engine.MAESTRO import L7_Agent_Ecosystem as layer7_ecosystem
+
+from Threat_Engine.Mapping.mapper import map_threats
 # Component type sets
 AI_COMPONENT_TYPES = {"llm", "agent", "tool-executor", "vector-store", "memory-store"}
 
@@ -88,7 +91,9 @@ def deduplicate(threats: list) -> list:
                 mitigations      = merged_mitigations,
                 data_flow        = existing.data_flow,
                 assets           = existing.assets,
-                attck_techniques = existing.attck_techniques,
+                suggested_techniques = existing.suggested_techniques,
+                attack_techniques = existing.attack_techniques,
+                attack_mapping    = existing.attack_mapping,
             )
     return list(seen.values())
 
@@ -172,6 +177,10 @@ def run_engine(arch_path: str, backend: str = "networkx") -> dict:
     for idx, threat in enumerate(deduped, start=1):
         threat.id = f"T-{idx:03d}"
 
+    # 8. Map threats to ATT&CK / ATLAS techniques
+    deduped = map_threats(deduped, arch)
+    # 9. Generate attack paths  
+    attack_paths = find_attack_paths(graph, arch, deduped)
     return {
         "project"            : arch.get("project", {}),
         "architecture"       : arch_path,
@@ -183,6 +192,7 @@ def run_engine(arch_path: str, backend: str = "networkx") -> dict:
         "total_before_dedup" : len(all_threats),
         "total_after_dedup"  : len(deduped),
         "threats"            : deduped,
+        "attack_paths"       : attack_paths,
         "graph"              : graph,
         "arch"               : arch,
     }
@@ -223,6 +233,7 @@ def print_table(results: dict, color: bool = True):
         print(f"  MAESTRO      : {results['maestro_count']} threats")
         print(f"  Duplicates   : {results['total_before_dedup'] - results['total_after_dedup']} removed")
     print(f"  Total        : {results['total_after_dedup']} threats")
+    print(f"  Attack Paths : {len(results['attack_paths'])} paths identified")
     print("=" * 100)
     print()
 
@@ -282,8 +293,26 @@ def print_json(results: dict):
                 "data_flow"   : t.data_flow,
                 "assets"      : t.assets,
                 "root_cause"  : t.root_cause,
+                "attack_techniques": t.attack_techniques,
+                "attack_mapping"   : t.attack_mapping,
             }
             for t in results["threats"]
+        ],
+        "attack_paths": [
+            {
+                "id"                   : p["id"],
+                "name"                 : p["name"],
+                "severity"             : p["severity"],
+                "score"                : p["score"],
+                "rank"                 : p["rank"],
+                "entry_point"          : p["entry_point"],
+                "target"               : p["target"],
+                "components_traversed" : p["components_traversed"],
+                "step_count"           : p["step_count"],
+                "threat_ids"           : p["threat_ids"],
+                "steps"                : p["steps"],
+            }
+            for p in results["attack_paths"]
         ],
     }
     print(json.dumps(output, indent=2))

@@ -122,6 +122,8 @@ components:
       encrypted_at_rest: true
       public_access: false
       logging: true
+      stores_pii: true
+      stores_credentials: true
 
 assets:
   - id: user-requests

@@ -110,6 +110,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"agent_identity_verification=False|inter_agent_flow=True|ecosystem|component={node['id']}",
+                    suggested_techniques = ["AML.T0091", "AML.T0052", "AML.T0098"],
                     mitigations   = [
                         "Implement mutual authentication between all communicating agents",
                         "Use cryptographic identity tokens for agent-to-agent communication",
@@ -152,6 +153,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"tool_scope_restrictions=False|tool_allowlist=False|ecosystem|component={node['id']}",
+                    suggested_techniques = ["AML.T0053", "AML.T0102", "AML.T0048"],
                     mitigations   = [
                         "Define explicit tool scope restrictions limiting what each tool can do",
                         "Implement a tool allowlist — agents may only invoke pre-approved tools",
@@ -195,6 +197,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"human_oversight=False|ecosystem|component={node['id']}",
+                    suggested_techniques = ["AML.T0080", "AML.T0018", "AML.T0094"],
                     mitigations   = [
                         "Implement human-in-the-loop checkpoints for high-impact agent decisions",
                         "Define explicit goal constraints that agents cannot override",
@@ -240,6 +243,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"internet_facing=True|authenticated=False|input_validation=False|ecosystem|component={node['id']}",
+                    suggested_techniques = ["AML.T0093", "AML.T0053", "AML.T0086"],
                     mitigations   = [
                         "Require authentication on all external integration endpoints",
                         "Implement strict input validation on all data received from external systems",
@@ -280,6 +284,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     ),
                     sources       = [SOURCE],
                     root_cause    = f"logging=False|audit_log_integrity=False|ecosystem|component={node['id']}",
+                    suggested_techniques = ["AML.T0086", "AML.T0053", "AML.T0096"],
                     mitigations   = [
                         "Implement comprehensive, tamper-proof logging on all agent actions",
                         "Maintain a cryptographically signed audit trail for all agent decisions",
