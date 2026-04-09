@@ -49,7 +49,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M2-01: Data store accepts input from untrusted source (Data Poisoning)
         #
-        # MAESTRO L2: Data Poisoning — manipulating training data or stored data
+        # MAESTRO L2: Data Poisoning - manipulating training data or stored data
         # to compromise AI agent behavior, leading to biased results or unintended
         # consequences in AI decision making.
         #
@@ -83,7 +83,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component    = node["id"],
                     category     = StrideCategory.TAMPERING,
                     maestro_layer= LAYER,
-                    subcategory  = "Unvalidated Input to Data Store — Data Poisoning Risk",
+                    subcategory  = "Unvalidated Input to Data Store - Data Poisoning Risk",
                     severity     = severity,
                     description  = (
                         f"'{node['id']}' ({node.get('type')}) accepts data from "
@@ -91,7 +91,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                         f"'{edge.get('flow_id', '?')}' without input validation. "
                         f"An attacker can manipulate this data to compromise AI "
                         f"agent behavior, leading to biased results or unintended "
-                        f"consequences in AI decision making — a data poisoning attack."
+                        f"consequences in AI decision making - a data poisoning attack."
                     ),
                     sources      = [SOURCE],
                     root_cause   = f"input_validation=False|untrusted_input|data_store|component={node['id']}",
@@ -100,7 +100,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     suggested_techniques = ["AML.T0070", "AML.T0043", "AML.T0080", "AML.T0099"],
                     mitigations  = [
                         "Validate and sanitize all data before writing to AI data stores",
-                        "Implement provenance tracking — record the source of all stored data",
+                        "Implement provenance tracking - record the source of all stored data",
                         "Restrict write access to data stores to trusted components only",
                         "Regularly audit and scan data store contents for anomalous entries",
                     ],
@@ -108,7 +108,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M2-02: Data store unencrypted or accessible from low trust zone (Data Exfiltration)
         #
-        # MAESTRO L2: Data Exfiltration — stealing sensitive AI data stored in
+        # MAESTRO L2: Data Exfiltration - stealing sensitive AI data stored in
         # databases or data stores, exposing private and confidential information
         # related to AI systems.
         #
@@ -137,12 +137,12 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.INFORMATION_DISCLOSURE,
                 maestro_layer= LAYER,
-                subcategory  = "Data Store Without Encryption or Access Controls — Exfiltration Risk",
+                subcategory  = "Data Store Without Encryption or Access Controls - Exfiltration Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) is missing "
-                    f"{' and '.join(missing)}. Sensitive AI data — including "
-                    f"embeddings, knowledge base contents, and agent memory — "
+                    f"{' and '.join(missing)}. Sensitive AI data - including "
+                    f"embeddings, knowledge base contents, and agent memory - "
                     f"can be stolen by an attacker who gains access to the "
                     f"underlying storage, exposing private and confidential "
                     f"information related to the AI system."
@@ -152,7 +152,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 suggested_techniques = ["AML.T0085", "AML.T0086", "AML.T0024", "AML.T0057"],
                 mitigations  = [
                     "Enable encryption at rest on all AI data stores",
-                    "Implement strict access controls — only authorized components can read",
+                    "Implement strict access controls - only authorized components can read",
                     "Use provider-managed encryption keys with access auditing",
                     "Monitor and alert on unusual read patterns from data stores",
                 ],
@@ -160,7 +160,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M2-03: Data store has no rate limiting or resource limits (DoS on Data Infrastructure)
         #
-        # MAESTRO L2: Denial of Service on Data Infrastructure — disrupting access
+        # MAESTRO L2: Denial of Service on Data Infrastructure - disrupting access
         # to data needed by AI agents, preventing agent functionality and interrupting
         # normal operation of the AI system.
         #
@@ -182,7 +182,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer= LAYER,
-                subcategory  = "Data Store Without Rate Limiting or Resource Limits — DoS Risk",
+                subcategory  = "Data Store Without Rate Limiting or Resource Limits - DoS Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no rate limiting "
@@ -204,7 +204,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M2-04: Unencrypted flows to/from data stores (Data Tampering)
         #
-        # MAESTRO L2: Data Tampering — modifying AI data in transit or at rest,
+        # MAESTRO L2: Data Tampering - modifying AI data in transit or at rest,
         # leading to incorrect agent behavior or inaccurate results within AI systems.
         #
         # Design-time signal: any flow to or from the data store that is not
@@ -235,7 +235,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.TAMPERING,
                 maestro_layer= LAYER,
-                subcategory  = f"Unencrypted Flow {direction.capitalize()} Data Store — Data Tampering Risk",
+                subcategory  = f"Unencrypted Flow {direction.capitalize()} Data Store - Data Tampering Risk",
                 severity     = severity,
                 description  = (
                     f"Flow '{edge.get('flow_id', '?')}' {direction} '{node['id']}' "
@@ -258,13 +258,13 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
     # M2-05: RAG pipeline accepts unvalidated data from untrusted sources (Compromised RAG)
     #
-    # MAESTRO L2: Compromised RAG Pipelines — injecting malicious code or data
+    # MAESTRO L2: Compromised RAG Pipelines - injecting malicious code or data
     # into AI data processing workflows, causing erroneous results or malicious
     # AI agent behavior.
     #
     # Design-time signal: a RAG-type storage component (vector-store, memory-store)
     # receives data from an untrusted/low trust source without input validation.
-    # This is more specific than M2-01 — it focuses on the RAG retrieval pipeline
+    # This is more specific than M2-01 - it focuses on the RAG retrieval pipeline
     # specifically and the downstream impact on agent reasoning.
 
     for node in graph.get_nodes():
@@ -292,7 +292,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component    = node["id"],
                     category     = StrideCategory.TAMPERING,
                     maestro_layer= LAYER,
-                    subcategory  = "RAG Pipeline Accepts Unvalidated Untrusted Data — Compromised RAG Risk",
+                    subcategory  = "RAG Pipeline Accepts Unvalidated Untrusted Data - Compromised RAG Risk",
                     severity     = Severity.CRITICAL,
                     description  = (
                         f"'{node['id']}' ({node.get('type')}) is part of a RAG "
@@ -301,7 +301,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                         f"without validation. An attacker can inject malicious content "
                         f"into the RAG pipeline, causing erroneous or malicious agent "
                         f"behavior when the poisoned data is retrieved and used in "
-                        f"the agent's reasoning context — a RAG poisoning attack."
+                        f"the agent's reasoning context - a RAG poisoning attack."
                     ),
                     sources      = [SOURCE],
                     root_cause   = f"rag_unvalidated_untrusted_input|component={node['id']}",

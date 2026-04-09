@@ -21,7 +21,7 @@ Design-Time Detectable Rules:
 
 Excluded Threats (not detectable from architecture schema):
     - Lateral Movement: network topology isolation cannot be determined from
-      component-level schema properties alone — requires runtime network
+      component-level schema properties alone - requires runtime network
       configuration data.
 
 Property Reuse (no new properties added except container_image_verification):
@@ -65,7 +65,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         # MAESTRO L4: Malicious code injected into AI agent containers infecting
         # production systems and compromising the AI deployment environment.
         #
-        # Design-time signal: container_image_verification absent (new property —
+        # Design-time signal: container_image_verification absent (new property -
         # no existing property captures image signing/digest verification).
 
         if not node.get("container_image_verification", False):
@@ -74,7 +74,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.TAMPERING,
                 maestro_layer = LAYER,
-                subcategory   = "No Container Image Verification — Compromised Container Image Risk",
+                subcategory   = "No Container Image Verification - Compromised Container Image Risk",
                 severity      = calculate_severity(Severity.HIGH, trust_level),
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no container image "
@@ -110,7 +110,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.ELEVATION_OF_PRIVILEGE,
                 maestro_layer = LAYER,
-                subcategory   = "No Access Controls on Infrastructure — Orchestration Attack Risk",
+                subcategory   = "No Access Controls on Infrastructure - Orchestration Attack Risk",
                 severity      = calculate_severity(Severity.HIGH, trust_level),
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no access controls "
@@ -147,7 +147,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.TAMPERING,
                 maestro_layer = LAYER,
-                subcategory   = "No Integrity Verification on Infrastructure — IaC Manipulation Risk",
+                subcategory   = "No Integrity Verification on Infrastructure - IaC Manipulation Risk",
                 severity      = calculate_severity(Severity.HIGH, trust_level),
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no integrity "
@@ -180,7 +180,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer = LAYER,
-                subcategory   = "No Resource Limits on Infrastructure — DoS Attack Risk",
+                subcategory   = "No Resource Limits on Infrastructure - DoS Attack Risk",
                 severity      = calculate_severity(Severity.MEDIUM, trust_level),
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no resource limits "
@@ -215,7 +215,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer = LAYER,
-                subcategory   = "No Logging on Infrastructure Component — Resource Hijacking Risk",
+                subcategory   = "No Logging on Infrastructure Component - Resource Hijacking Risk",
                 severity      = calculate_severity(Severity.MEDIUM, trust_level),
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no logging defined. "

@@ -72,7 +72,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             mitigations = [
                 "Implement role-based access control (RBAC) or attribute-based access control (ABAC)",
                 "Validate permissions at each service boundary, not just the entry point",
-                "Apply principle of least privilege — grant only what is needed",
+                "Apply principle of least privilege - grant only what is needed",
             ],
         ))
 
@@ -154,7 +154,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             root_cause  = f"over_privileged=True|component={node['id']}",
             suggested_techniques = ["T1068", "T1134","T1098"],
             mitigations = [
-                "Apply principle of least privilege — remove all unnecessary permissions",
+                "Apply principle of least privilege - remove all unnecessary permissions",
                 "Scope IAM roles and service accounts to the minimum required actions",
                 "Regularly audit and review service permissions",
                 "Use separate service accounts for each service",

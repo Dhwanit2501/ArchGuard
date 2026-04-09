@@ -28,13 +28,13 @@ Design-Time Detectable Rules:
     M7-05: No logging or audit trail on agent actions (Repudiation)
 
 Excluded Threats (not detectable from architecture schema):
-    - Marketplace Manipulation: external marketplace — not in architecture scope
+    - Marketplace Manipulation: external marketplace - not in architecture scope
     - Horizontal/Vertical Solution Vulnerabilities: requires industry-specific
       runtime knowledge not visible from schema
-    - Compromised Agent Registry: external infrastructure — outside architecture scope
-    - Malicious Agent Discovery: discovery mechanism is external — not schema detectable
-    - Agent Pricing Model Manipulation: financial/billing system — outside scope
-    - Inaccurate Agent Capability Description: documentation quality — not detectable
+    - Compromised Agent Registry: external infrastructure - outside architecture scope
+    - Malicious Agent Discovery: discovery mechanism is external - not schema detectable
+    - Agent Pricing Model Manipulation: financial/billing system - outside scope
+    - Inaccurate Agent Capability Description: documentation quality - not detectable
 
 New Properties Required:
     - agent_identity_verification: bool  (no existing property captures inter-agent identity)
@@ -98,7 +98,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.SPOOFING,
                     maestro_layer = LAYER,
-                    subcategory   = "No Agent Identity Verification — Compromised Agent / Impersonation Risk",
+                    subcategory   = "No Agent Identity Verification - Compromised Agent / Impersonation Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) receives input from "
@@ -142,7 +142,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.ELEVATION_OF_PRIVILEGE,
                     maestro_layer = LAYER,
-                    subcategory   = "No Tool Scope Restrictions or Allowlist — Agent Tool Misuse Risk",
+                    subcategory   = "No Tool Scope Restrictions or Allowlist - Agent Tool Misuse Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) has no tool scope "
@@ -156,7 +156,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     suggested_techniques = ["AML.T0053", "AML.T0102", "AML.T0048"],
                     mitigations   = [
                         "Define explicit tool scope restrictions limiting what each tool can do",
-                        "Implement a tool allowlist — agents may only invoke pre-approved tools",
+                        "Implement a tool allowlist - agents may only invoke pre-approved tools",
                         "Apply least-privilege principles to tool execution permissions",
                         "Validate all tool invocation parameters against expected schemas",
                         "Log and monitor all tool invocations for out-of-scope usage patterns",
@@ -185,7 +185,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.ELEVATION_OF_PRIVILEGE,
                     maestro_layer = LAYER,
-                    subcategory   = "No Human Oversight in Agent Chain — Agent Goal Manipulation Risk",
+                    subcategory   = "No Human Oversight in Agent Chain - Agent Goal Manipulation Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) operates in an agent "
@@ -232,7 +232,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.TAMPERING,
                     maestro_layer = LAYER,
-                    subcategory   = "Unauthenticated External Integration Without Validation — Integration Risk",
+                    subcategory   = "Unauthenticated External Integration Without Validation - Integration Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) is internet-facing, "
@@ -260,7 +260,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         # actions back to an AI agent.
         #
         # Design-time signal: no logging AND no audit_log_integrity on agent
-        # components. Uses existing properties — no new property needed.
+        # components. Uses existing properties - no new property needed.
 
         if node.get("type") in AGENT_TYPES:
             has_logging          = node.get("logging", False)
@@ -274,7 +274,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.REPUDIATION,
                     maestro_layer = LAYER,
-                    subcategory   = "No Logging or Audit Trail on Agent — Ecosystem Repudiation Risk",
+                    subcategory   = "No Logging or Audit Trail on Agent - Ecosystem Repudiation Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) has no logging or "

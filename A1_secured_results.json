@@ -1,0 +1,1152 @@
+{
+  "project": {
+    "name": "ReAct Agent Pattern (Secured)",
+    "id": "react-agent-secured",
+    "architecture_type": "agentic-ai",
+    "pattern": "react",
+    "human_oversight": true
+  },
+  "architecture": "architecture_examples/A1_secured.yaml",
+  "is_agentic": true,
+  "backend": "networkx",
+  "stride_count": 12,
+  "maestro_count": 4,
+  "total_before_dedup": 16,
+  "total_after_dedup": 16,
+  "threats": [
+    {
+      "id": "T-001",
+      "component": "user",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Boundary Crossing",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df9' crosses a trust boundary from 'response' to 'user' without authentication. An attacker can impersonate any client and send arbitrary requests without proving identity.",
+      "mitigations": [
+        "Implement token-based authentication (JWT / OAuth2)",
+        "Validate identity at every trust boundary crossing",
+        "Reject unauthenticated requests at the entry point"
+      ],
+      "data_flow": "df9",
+      "assets": [],
+      "root_cause": "authenticated=False|crosses_boundary=True|flow=df9",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-002",
+      "component": "user",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Internet-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'user' is internet-facing and accepts unauthenticated requests. Any external actor can interact with this component without proving their identity, enabling spoofing and impersonation.",
+      "mitigations": [
+        "Require authentication on all internet-facing endpoints",
+        "Implement API key validation or OAuth2 at the entry point",
+        "Deploy a WAF to filter unauthenticated traffic"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|unauthenticated_incoming|component=user",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-003",
+      "component": "query",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Internet-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'query' is internet-facing and accepts unauthenticated requests. Any external actor can interact with this component without proving their identity, enabling spoofing and impersonation.",
+      "mitigations": [
+        "Require authentication on all internet-facing endpoints",
+        "Implement API key validation or OAuth2 at the entry point",
+        "Deploy a WAF to filter unauthenticated traffic"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|unauthenticated_incoming|component=query",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-004",
+      "component": "llm-reason",
+      "category": "Spoofing",
+      "subcategory": "Direct Access to Internal Component from Untrusted Zone",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal component 'llm-reason' (type: llm) is directly reachable from the untrusted zone via flow 'df2'. Internal services should never be directly accessible from untrusted sources without passing through a gateway or load balancer.",
+      "mitigations": [
+        "Route all external traffic through an API gateway or load balancer",
+        "Remove direct network paths from untrusted zones to internal services",
+        "Enforce network segmentation and firewall rules"
+      ],
+      "data_flow": "df2",
+      "assets": [],
+      "root_cause": "untrusted_direct_access|component=llm-reason",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-005",
+      "component": "user",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'user' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=user",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-006",
+      "component": "query",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'query' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=query",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-007",
+      "component": "tools",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'tools' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=tools",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-008",
+      "component": "environment",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'environment' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=environment",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-009",
+      "component": "response",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'response' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=response",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-010",
+      "component": "llm-reason",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Assets Flowing to Lower Trust Zone",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df11' carries sensitive assets (knowledge-base) from 'vector-store' [high] to 'llm-reason' [medium] - a zone with lower trust. Sensitive data should never flow to less trusted environments.",
+      "mitigations": [
+        "Avoid passing sensitive data to lower trust zones",
+        "Sanitize or redact sensitive fields before sending to lower trust components",
+        "Re-evaluate the architecture to prevent downward data flows"
+      ],
+      "data_flow": "df11",
+      "assets": [
+        "knowledge-base"
+      ],
+      "root_cause": "sensitive_assets_to_lower_trust|flow=df11",
+      "attack_techniques": [
+        "T1528",
+        "T1552",
+        "T1567"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1528",
+          "technique_name": "Steal Application Access Token",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1528/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Exfiltration"
+          ],
+          "technique_id": "T1567",
+          "technique_name": "Exfiltration Over Web Service",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1567/"
+        }
+      ]
+    },
+    {
+      "id": "T-011",
+      "component": "query",
+      "category": "Denial of Service",
+      "subcategory": "Internal Service Reachable from Untrusted Zone Without Resource Limits",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal service 'query' is reachable from the untrusted zone via flow 'df1' and has no resource limits configured. An attacker can exhaust compute, memory, or connection resources of this service.",
+      "mitigations": [
+        "Configure CPU, memory, and connection limits on internal services",
+        "Implement circuit breakers to prevent cascade failures",
+        "Block direct access from untrusted zones to internal services"
+      ],
+      "data_flow": "df1",
+      "assets": [],
+      "root_cause": "untrusted_reachable|no_resource_limits|component=query",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-012",
+      "component": "user",
+      "category": "Denial of Service",
+      "subcategory": "Internal Service Reachable from Untrusted Zone Without Resource Limits",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal service 'user' is reachable from the untrusted zone via flow 'df9' and has no resource limits configured. An attacker can exhaust compute, memory, or connection resources of this service.",
+      "mitigations": [
+        "Configure CPU, memory, and connection limits on internal services",
+        "Implement circuit breakers to prevent cascade failures",
+        "Block direct access from untrusted zones to internal services"
+      ],
+      "data_flow": "df9",
+      "assets": [],
+      "root_cause": "untrusted_reachable|no_resource_limits|component=user",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-013",
+      "component": "vector-store",
+      "category": "Tampering",
+      "subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+      "severity": "Critical",
+      "sources": [
+        "MAESTRO-L2"
+      ],
+      "description": "'vector-store' (vector-store) accepts data from 'environment' (low trust) via flow 'df10' without input validation. An attacker can manipulate this data to compromise AI agent behavior, leading to biased results or unintended consequences in AI decision making - a data poisoning attack.",
+      "mitigations": [
+        "Validate and sanitize all data before writing to AI data stores",
+        "Implement provenance tracking - record the source of all stored data",
+        "Restrict write access to data stores to trusted components only",
+        "Regularly audit and scan data store contents for anomalous entries"
+      ],
+      "data_flow": "df10",
+      "assets": [
+        "knowledge-base"
+      ],
+      "root_cause": "input_validation=False|untrusted_input|data_store|component=vector-store",
+      "attack_techniques": [
+        "AML.T0043",
+        "AML.T0070",
+        "AML.T0080",
+        "AML.T0099"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "AI Attack Staging"
+          ],
+          "technique_id": "AML.T0043",
+          "technique_name": "Craft Adversarial Data",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0043/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0070/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0080",
+          "technique_name": "AI Agent Context Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0080/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0099",
+          "technique_name": "AI Agent Tool Data Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0099/"
+        }
+      ]
+    },
+    {
+      "id": "T-014",
+      "component": "vector-store",
+      "category": "Tampering",
+      "subcategory": "RAG Pipeline Accepts Unvalidated Untrusted Data - Compromised RAG Risk",
+      "severity": "Critical",
+      "sources": [
+        "MAESTRO-L2"
+      ],
+      "description": "'vector-store' (vector-store) is part of a RAG pipeline and accepts data from 'environment' (low trust) via flow 'df10' without validation. An attacker can inject malicious content into the RAG pipeline, causing erroneous or malicious agent behavior when the poisoned data is retrieved and used in the agent's reasoning context - a RAG poisoning attack.",
+      "mitigations": [
+        "Validate and sanitize all documents before indexing into RAG pipeline",
+        "Implement content filtering on all data entering the vector store",
+        "Restrict write access to the RAG pipeline to trusted components only",
+        "Monitor retrieved content for anomalous or adversarial patterns",
+        "Implement document provenance tracking in the RAG pipeline"
+      ],
+      "data_flow": "df10",
+      "assets": [],
+      "root_cause": "rag_unvalidated_untrusted_input|component=vector-store",
+      "attack_techniques": [
+        "AML.T0070",
+        "AML.T0071",
+        "AML.T0080"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "technique_id": "AML.T0071",
+          "technique_name": "False RAG Entry Injection",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0071/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0070/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0080",
+          "technique_name": "AI Agent Context Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0080/"
+        }
+      ]
+    },
+    {
+      "id": "T-015",
+      "component": "llm-reason",
+      "category": "Elevation of Privilege",
+      "subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+      "severity": "High",
+      "sources": [
+        "MAESTRO-L4"
+      ],
+      "description": "'llm-reason' (llm) has no access controls defined. An attacker can exploit vulnerabilities in the orchestration system managing this component to gain unauthorized access and control over AI deployment systems, disrupting AI agent functionality.",
+      "mitigations": [
+        "Implement RBAC on all orchestration systems managing AI components",
+        "Apply least-privilege principles to orchestration service accounts",
+        "Restrict access to orchestration APIs and management interfaces",
+        "Enable audit logging on all orchestration control plane actions",
+        "Network-isolate the orchestration control plane from the data plane"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "access_controls=False|infra|component=llm-reason",
+      "attack_techniques": [
+        "AML.T0012",
+        "AML.T0053",
+        "AML.T0091"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0053/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0012",
+          "technique_name": "Valid Accounts",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0012/"
+        },
+        {
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0091/"
+        }
+      ]
+    },
+    {
+      "id": "T-016",
+      "component": "llm-generate",
+      "category": "Elevation of Privilege",
+      "subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+      "severity": "High",
+      "sources": [
+        "MAESTRO-L4"
+      ],
+      "description": "'llm-generate' (llm) has no access controls defined. An attacker can exploit vulnerabilities in the orchestration system managing this component to gain unauthorized access and control over AI deployment systems, disrupting AI agent functionality.",
+      "mitigations": [
+        "Implement RBAC on all orchestration systems managing AI components",
+        "Apply least-privilege principles to orchestration service accounts",
+        "Restrict access to orchestration APIs and management interfaces",
+        "Enable audit logging on all orchestration control plane actions",
+        "Network-isolate the orchestration control plane from the data plane"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "access_controls=False|infra|component=llm-generate",
+      "attack_techniques": [
+        "AML.T0012",
+        "AML.T0053",
+        "AML.T0091"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0053/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0012",
+          "technique_name": "Valid Accounts",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0012/"
+        },
+        {
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0091/"
+        }
+      ]
+    }
+  ],
+  "attack_paths": [
+    {
+      "id": "AP-004",
+      "name": "Initial Access via tools -> Lateral Movement on llm-reason",
+      "severity": "Critical",
+      "score": 78,
+      "rank": 1,
+      "entry_point": "tools",
+      "target": "llm-reason",
+      "components_traversed": [
+        "tools",
+        "environment",
+        "vector-store",
+        "llm-reason"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-007",
+        "T-008",
+        "T-013",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "tools",
+          "component_type": "tool-executor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-007",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 3,
+          "component": "vector-store",
+          "component_type": "vector-store",
+          "tactic": "Persistence",
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "threat_id": "T-013",
+          "threat_subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 4,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Lateral Movement",
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ]
+    },
+    {
+      "id": "AP-006",
+      "name": "Initial Access via environment -> Lateral Movement on llm-reason",
+      "severity": "Critical",
+      "score": 78,
+      "rank": 2,
+      "entry_point": "environment",
+      "target": "llm-reason",
+      "components_traversed": [
+        "environment",
+        "vector-store",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-008",
+        "T-013",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "vector-store",
+          "component_type": "vector-store",
+          "tactic": "Persistence",
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "threat_id": "T-013",
+          "threat_subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Lateral Movement",
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ]
+    },
+    {
+      "id": "AP-001",
+      "name": "Initial Access via user -> Execution on llm-reason",
+      "severity": "Critical",
+      "score": 75,
+      "rank": 3,
+      "entry_point": "user",
+      "target": "llm-reason",
+      "components_traversed": [
+        "user",
+        "query",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-001",
+        "T-003",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "user",
+          "component_type": "actor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 2,
+          "component": "query",
+          "component_type": "input",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-003",
+          "threat_subcategory": "Unauthenticated Internet-Facing Component",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ]
+    },
+    {
+      "id": "AP-003",
+      "name": "Initial Access via tools -> Execution on llm-reason",
+      "severity": "High",
+      "score": 75,
+      "rank": 4,
+      "entry_point": "tools",
+      "target": "llm-reason",
+      "components_traversed": [
+        "tools",
+        "environment",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-007",
+        "T-008",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "tools",
+          "component_type": "tool-executor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-007",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ]
+    },
+    {
+      "id": "AP-007",
+      "name": "Initial Access via response -> Execution on llm-reason",
+      "severity": "Critical",
+      "score": 75,
+      "rank": 5,
+      "entry_point": "response",
+      "target": "llm-reason",
+      "components_traversed": [
+        "response",
+        "user",
+        "query",
+        "llm-reason"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-009",
+        "T-001",
+        "T-003",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "response",
+          "component_type": "output",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-009",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "user",
+          "component_type": "actor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "query",
+          "component_type": "input",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-003",
+          "threat_subcategory": "Unauthenticated Internet-Facing Component",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 4,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ]
+    }
+  ]
+}

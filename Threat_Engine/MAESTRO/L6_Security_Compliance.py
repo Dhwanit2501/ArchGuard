@@ -22,10 +22,10 @@ Design-Time Detectable Rules:
     M6-05: No auth or rate limiting on LLM (Model Extraction)
 
 Excluded Threats (not detectable from architecture schema):
-    - Evasion of Security AI Agents: requires runtime — adversarial evasion
+    - Evasion of Security AI Agents: requires runtime - adversarial evasion
       patterns only observable when the agent is executing.
     - Bias in Security AI Agents: requires runtime evaluation of model outputs
-      across population samples — not visible from architecture schema alone.
+      across population samples - not visible from architecture schema alone.
 
 New Properties Required:
     - compliance_controls: bool  (no existing property captures this)
@@ -83,7 +83,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.TAMPERING,
                 maestro_layer = LAYER,
-                subcategory   = "No Input Filtering on AI Component — Security Agent Data Poisoning Risk",
+                subcategory   = "No Input Filtering on AI Component - Security Agent Data Poisoning Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no input validation "
@@ -100,7 +100,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     "Use integrity verification on operational data sources",
                     "Separate security-critical data pipelines from general data flows",
                     "Monitor data inputs for statistical anomalies indicating poisoning",
-                    "Apply allowlist-based validation — reject inputs outside expected distribution",
+                    "Apply allowlist-based validation - reject inputs outside expected distribution",
                 ],
             ))
 
@@ -126,7 +126,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.ELEVATION_OF_PRIVILEGE,
                 maestro_layer = LAYER,
-                subcategory   = "No Output Filtering or Content Policy — Compromised Security Agent Risk",
+                subcategory   = "No Output Filtering or Content Policy - Compromised Security Agent Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no output filtering "
@@ -165,7 +165,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.INFORMATION_DISCLOSURE,
                 maestro_layer = LAYER,
-                subcategory   = "No Compliance Controls Defined — Regulatory Non-Compliance Risk",
+                subcategory   = "No Compliance Controls Defined - Regulatory Non-Compliance Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no compliance controls "
@@ -204,7 +204,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.REPUDIATION,
                 maestro_layer = LAYER,
-                subcategory   = "No Explainability Controls — Security Decision Auditability Risk",
+                subcategory   = "No Explainability Controls - Security Decision Auditability Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no explainability "
@@ -234,7 +234,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         # Design-time signal: rate_limiting absent on LLM components receiving
         # external input. Without rate limiting, attackers can repeatedly query
         # the model to extract its behavior and build bypass strategies.
-        # Uses existing rate_limiting property — no new property needed.
+        # Uses existing rate_limiting property - no new property needed.
 
         if node.get("type") in LLM_TYPES:
             incoming_unauth = [
@@ -253,7 +253,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     component     = node["id"],
                     category      = StrideCategory.INFORMATION_DISCLOSURE,
                     maestro_layer = LAYER,
-                    subcategory   = "No Auth or Rate Limiting on LLM — Model Extraction Risk",
+                    subcategory   = "No Auth or Rate Limiting on LLM - Model Extraction Risk",
                     severity      = severity,
                     description   = (
                         f"'{node['id']}' ({node.get('type')}) receives unauthenticated "

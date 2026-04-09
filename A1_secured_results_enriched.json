@@ -1,0 +1,1226 @@
+{
+  "project": {
+    "name": "ReAct Agent Pattern (Secured)",
+    "id": "react-agent-secured",
+    "architecture_type": "agentic-ai",
+    "pattern": "react",
+    "human_oversight": true
+  },
+  "architecture": "architecture_examples/A1_secured.yaml",
+  "is_agentic": true,
+  "backend": "networkx",
+  "stride_count": 12,
+  "maestro_count": 4,
+  "total_before_dedup": 16,
+  "total_after_dedup": 16,
+  "threats": [
+    {
+      "id": "T-001",
+      "component": "user",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Boundary Crossing",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df9' crosses a trust boundary from 'response' to 'user' without authentication. An attacker can impersonate any client and send arbitrary requests without proving identity.",
+      "mitigations": [
+        "Implement token-based authentication (JWT / OAuth2)",
+        "Validate identity at every trust boundary crossing",
+        "Reject unauthenticated requests at the entry point"
+      ],
+      "data_flow": "df9",
+      "assets": [],
+      "root_cause": "authenticated=False|crosses_boundary=True|flow=df9",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The user component lacks authentication enforcement at a trust boundary crossing on dataflow df9, meaning any request originating from this component is not cryptographically or session-validated before being accepted by downstream agentic components. An attacker can impersonate a legitimate user by injecting or replaying unauthenticated requests across this boundary, causing the AI agent to execute actions, access data, or trigger workflows under a falsely assumed identity. In an agentic-AI architecture this is critical because agents often perform autonomous, chained actions with elevated privileges, so a single spoofed boundary crossing can cascade into unauthorized data exfiltration, resource manipulation, or compromise of the entire agent execution pipeline."
+    },
+    {
+      "id": "T-002",
+      "component": "user",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Internet-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'user' is internet-facing and accepts unauthenticated requests. Any external actor can interact with this component without proving their identity, enabling spoofing and impersonation.",
+      "mitigations": [
+        "Require authentication on all internet-facing endpoints",
+        "Implement API key validation or OAuth2 at the entry point",
+        "Deploy a WAF to filter unauthenticated traffic"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|unauthenticated_incoming|component=user",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The user component is exposed to the internet without authentication controls, meaning any anonymous actor can interact with it and present themselves as a legitimate user without proving their identity. An attacker can forge or impersonate user identities, inject malicious inputs into the agentic AI pipeline, and potentially hijack agent sessions or manipulate task execution by masquerading as a trusted principal. In an agentic AI architecture this is critical because unauthenticated user inputs can propagate through autonomous agent chains, causing cascading unauthorized actions, data exfiltration, or privilege escalation with no verified accountability trail."
+    },
+    {
+      "id": "T-003",
+      "component": "query",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Internet-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'query' is internet-facing and accepts unauthenticated requests. Any external actor can interact with this component without proving their identity, enabling spoofing and impersonation.",
+      "mitigations": [
+        "Require authentication on all internet-facing endpoints",
+        "Implement API key validation or OAuth2 at the entry point",
+        "Deploy a WAF to filter unauthenticated traffic"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|unauthenticated_incoming|component=query",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The query component is exposed to the internet without any authentication mechanism, meaning any external actor can send requests to it while impersonating a legitimate user or system. An attacker can craft malicious or spoofed queries, injecting fabricated context, manipulated prompts, or falsified identity claims directly into the AI agent's reasoning pipeline without being challenged. This is critical because unauthenticated access to the query entry point undermines all downstream trust decisions the agent makes, potentially allowing full manipulation of agent behavior, data exfiltration, or unauthorized task execution from the outset."
+    },
+    {
+      "id": "T-004",
+      "component": "llm-reason",
+      "category": "Spoofing",
+      "subcategory": "Direct Access to Internal Component from Untrusted Zone",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal component 'llm-reason' (type: llm) is directly reachable from the untrusted zone via flow 'df2'. Internal services should never be directly accessible from untrusted sources without passing through a gateway or load balancer.",
+      "mitigations": [
+        "Route all external traffic through an API gateway or load balancer",
+        "Remove direct network paths from untrusted zones to internal services",
+        "Enforce network segmentation and firewall rules"
+      ],
+      "data_flow": "df2",
+      "assets": [],
+      "root_cause": "untrusted_direct_access|component=llm-reason",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The llm-reason component, which handles core reasoning and inference logic, is directly reachable from an untrusted network zone without an intervening trust boundary or authentication layer, meaning an attacker can send crafted inputs directly to the reasoning engine without passing through any gatekeeping controls. An attacker could exploit this by submitting malicious prompts, adversarial inputs, or forged identity tokens directly to llm-reason, bypassing prompt filtering, rate limiting, or session validation that would normally be enforced at a higher-trust boundary. This is critical because the reasoning component is the decision-making core of the agentic system - direct untrusted access allows an adversary to manipulate agent behavior, inject false context, or impersonate trusted orchestrators, potentially compromising every downstream action the agent takes."
+    },
+    {
+      "id": "T-005",
+      "component": "user",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'user' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=user",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The user component is internet-facing but lacks logging, meaning no audit trail exists to record what actions users initiate, what inputs they submit, or what the system responds with. An attacker or malicious user could submit harmful prompts, trigger unauthorized agent actions, or abuse the system and then credibly deny any involvement since no evidence was captured. In an agentic-AI architecture where user inputs can cascade into autonomous multi-step actions with real-world consequences, the inability to reconstruct who did what and when makes incident response, forensic investigation, and accountability enforcement effectively impossible."
+    },
+    {
+      "id": "T-006",
+      "component": "query",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'query' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=query",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The query component is internet-facing but lacks logging, meaning there is no audit trail of who submitted queries, what data was requested, or when interactions occurred. An attacker or malicious insider can submit harmful, data-exfiltrating, or prompt-injection queries and later deny any involvement, with no forensic evidence to contradict them. In an agentic-AI architecture this is especially critical because query inputs directly drive autonomous agent behavior, and without logs, investigating incidents, detecting abuse patterns, or holding parties accountable becomes technically impossible."
+    },
+    {
+      "id": "T-007",
+      "component": "tools",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'tools' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=tools",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "An internet-facing tools component without logging creates a repudiation gap where neither the system nor external parties can reconstruct what tool calls were made, by whom, or what data was accessed or modified. An attacker who compromises or misuses the tool interface-whether through prompt injection, stolen credentials, or API abuse-can invoke destructive or data-exfiltrating tool actions that leave no forensic trail, making it impossible to detect the breach, scope the damage, or attribute the activity. In an agentic AI architecture, where tools may execute code, query databases, or call external APIs autonomously, the absence of logging eliminates the audit chain needed to distinguish legitimate agent behavior from malicious misuse."
+    },
+    {
+      "id": "T-008",
+      "component": "environment",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'environment' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=environment",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "An internet-facing agentic AI environment component without logging has no record of actions taken, inputs received, or decisions made by the agent, meaning any actor-internal or external-can deny performing malicious operations, injecting adversarial prompts, or manipulating agent behavior. An attacker who compromises the environment or abuses the agent's tool-use capabilities can exfiltrate data, alter state, or trigger unintended actions with zero forensic trail to reconstruct the incident. In agentic architectures where the environment mediates real-world effects (API calls, file writes, external service interactions), the absence of logging eliminates the ability to audit agent behavior, detect prompt injection attacks post-hoc, or establish accountability for autonomous decisions."
+    },
+    {
+      "id": "T-009",
+      "component": "response",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'response' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=response",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-010",
+      "component": "llm-reason",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Assets Flowing to Lower Trust Zone",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df11' carries sensitive assets (knowledge-base) from 'vector-store' [high] to 'llm-reason' [medium] - a zone with lower trust. Sensitive data should never flow to less trusted environments.",
+      "mitigations": [
+        "Avoid passing sensitive data to lower trust zones",
+        "Sanitize or redact sensitive fields before sending to lower trust components",
+        "Re-evaluate the architecture to prevent downward data flows"
+      ],
+      "data_flow": "df11",
+      "assets": [
+        "knowledge-base"
+      ],
+      "root_cause": "sensitive_assets_to_lower_trust|flow=df11",
+      "attack_techniques": [
+        "T1528",
+        "T1552",
+        "T1567"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1528",
+          "technique_name": "Steal Application Access Token",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1528/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Exfiltration"
+          ],
+          "technique_id": "T1567",
+          "technique_name": "Exfiltration Over Web Service",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1567/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-011",
+      "component": "query",
+      "category": "Denial of Service",
+      "subcategory": "Internal Service Reachable from Untrusted Zone Without Resource Limits",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal service 'query' is reachable from the untrusted zone via flow 'df1' and has no resource limits configured. An attacker can exhaust compute, memory, or connection resources of this service.",
+      "mitigations": [
+        "Configure CPU, memory, and connection limits on internal services",
+        "Implement circuit breakers to prevent cascade failures",
+        "Block direct access from untrusted zones to internal services"
+      ],
+      "data_flow": "df1",
+      "assets": [],
+      "root_cause": "untrusted_reachable|no_resource_limits|component=query",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-012",
+      "component": "user",
+      "category": "Denial of Service",
+      "subcategory": "Internal Service Reachable from Untrusted Zone Without Resource Limits",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal service 'user' is reachable from the untrusted zone via flow 'df9' and has no resource limits configured. An attacker can exhaust compute, memory, or connection resources of this service.",
+      "mitigations": [
+        "Configure CPU, memory, and connection limits on internal services",
+        "Implement circuit breakers to prevent cascade failures",
+        "Block direct access from untrusted zones to internal services"
+      ],
+      "data_flow": "df9",
+      "assets": [],
+      "root_cause": "untrusted_reachable|no_resource_limits|component=user",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-013",
+      "component": "vector-store",
+      "category": "Tampering",
+      "subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+      "severity": "Critical",
+      "sources": [
+        "MAESTRO-L2"
+      ],
+      "description": "'vector-store' (vector-store) accepts data from 'environment' (low trust) via flow 'df10' without input validation. An attacker can manipulate this data to compromise AI agent behavior, leading to biased results or unintended consequences in AI decision making - a data poisoning attack.",
+      "mitigations": [
+        "Validate and sanitize all data before writing to AI data stores",
+        "Implement provenance tracking - record the source of all stored data",
+        "Restrict write access to data stores to trusted components only",
+        "Regularly audit and scan data store contents for anomalous entries"
+      ],
+      "data_flow": "df10",
+      "assets": [
+        "knowledge-base"
+      ],
+      "root_cause": "input_validation=False|untrusted_input|data_store|component=vector-store",
+      "attack_techniques": [
+        "AML.T0043",
+        "AML.T0070",
+        "AML.T0080",
+        "AML.T0099"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "AI Attack Staging"
+          ],
+          "technique_id": "AML.T0043",
+          "technique_name": "Craft Adversarial Data",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0043/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0070/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0080",
+          "technique_name": "AI Agent Context Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0080/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0099",
+          "technique_name": "AI Agent Tool Data Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0099/"
+        }
+      ],
+      "threat_context": "The vector store accepts embeddings or raw text inputs without validation, meaning an attacker who can influence upstream data pipelines or directly submit content can inject semantically crafted vectors designed to corrupt retrieval results or bias the AI agent's context window. Exploitation involves inserting poisoned documents or manipulated embedding vectors that cause the retrieval system to surface attacker-controlled content during similarity searches, effectively hijacking the agent's grounding data without altering the model itself. This is critical in agentic architectures because the vector store serves as the agent's external memory and knowledge base, meaning poisoned entries directly influence downstream reasoning, tool selection, and action execution across every query that retrieves that corrupted data."
+    },
+    {
+      "id": "T-014",
+      "component": "vector-store",
+      "category": "Tampering",
+      "subcategory": "RAG Pipeline Accepts Unvalidated Untrusted Data - Compromised RAG Risk",
+      "severity": "Critical",
+      "sources": [
+        "MAESTRO-L2"
+      ],
+      "description": "'vector-store' (vector-store) is part of a RAG pipeline and accepts data from 'environment' (low trust) via flow 'df10' without validation. An attacker can inject malicious content into the RAG pipeline, causing erroneous or malicious agent behavior when the poisoned data is retrieved and used in the agent's reasoning context - a RAG poisoning attack.",
+      "mitigations": [
+        "Validate and sanitize all documents before indexing into RAG pipeline",
+        "Implement content filtering on all data entering the vector store",
+        "Restrict write access to the RAG pipeline to trusted components only",
+        "Monitor retrieved content for anomalous or adversarial patterns",
+        "Implement document provenance tracking in the RAG pipeline"
+      ],
+      "data_flow": "df10",
+      "assets": [],
+      "root_cause": "rag_unvalidated_untrusted_input|component=vector-store",
+      "attack_techniques": [
+        "AML.T0070",
+        "AML.T0071",
+        "AML.T0080"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "technique_id": "AML.T0071",
+          "technique_name": "False RAG Entry Injection",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0071/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0070/"
+        },
+        {
+          "tactics": [
+            "Persistence"
+          ],
+          "technique_id": "AML.T0080",
+          "technique_name": "AI Agent Context Poisoning",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0080/"
+        }
+      ],
+      "threat_context": "The vector-store component accepts and indexes data from untrusted or unvalidated sources into the RAG pipeline, meaning an attacker can inject malicious, poisoned, or adversarially crafted embeddings and documents directly into the knowledge base without integrity checks. Once poisoned content is stored, any retrieval operation will surface attacker-controlled data as authoritative context to the LLM, enabling prompt injection, misinformation propagation, or manipulation of downstream agent decisions at scale. This is critical because the vector-store is the foundational trust anchor for all RAG-augmented responses, and compromising it undermines the integrity of every query served by the agentic system."
+    },
+    {
+      "id": "T-015",
+      "component": "llm-reason",
+      "category": "Elevation of Privilege",
+      "subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+      "severity": "High",
+      "sources": [
+        "MAESTRO-L4"
+      ],
+      "description": "'llm-reason' (llm) has no access controls defined. An attacker can exploit vulnerabilities in the orchestration system managing this component to gain unauthorized access and control over AI deployment systems, disrupting AI agent functionality.",
+      "mitigations": [
+        "Implement RBAC on all orchestration systems managing AI components",
+        "Apply least-privilege principles to orchestration service accounts",
+        "Restrict access to orchestration APIs and management interfaces",
+        "Enable audit logging on all orchestration control plane actions",
+        "Network-isolate the orchestration control plane from the data plane"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "access_controls=False|infra|component=llm-reason",
+      "attack_techniques": [
+        "AML.T0012",
+        "AML.T0053",
+        "AML.T0091"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0053/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0012",
+          "technique_name": "Valid Accounts",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0012/"
+        },
+        {
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0091/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-016",
+      "component": "llm-generate",
+      "category": "Elevation of Privilege",
+      "subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+      "severity": "High",
+      "sources": [
+        "MAESTRO-L4"
+      ],
+      "description": "'llm-generate' (llm) has no access controls defined. An attacker can exploit vulnerabilities in the orchestration system managing this component to gain unauthorized access and control over AI deployment systems, disrupting AI agent functionality.",
+      "mitigations": [
+        "Implement RBAC on all orchestration systems managing AI components",
+        "Apply least-privilege principles to orchestration service accounts",
+        "Restrict access to orchestration APIs and management interfaces",
+        "Enable audit logging on all orchestration control plane actions",
+        "Network-isolate the orchestration control plane from the data plane"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "access_controls=False|infra|component=llm-generate",
+      "attack_techniques": [
+        "AML.T0012",
+        "AML.T0053",
+        "AML.T0091"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0053/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Privilege Escalation"
+          ],
+          "technique_id": "AML.T0012",
+          "technique_name": "Valid Accounts",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0012/"
+        },
+        {
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "url": "https://atlas.mitre.org/techniques/AML.T0091/"
+        }
+      ],
+      "threat_context": ""
+    }
+  ],
+  "attack_paths": [
+    {
+      "id": "AP-004",
+      "name": "Initial Access via tools -> Lateral Movement on llm-reason",
+      "severity": "Critical",
+      "score": 78,
+      "rank": 1,
+      "entry_point": "tools",
+      "target": "llm-reason",
+      "components_traversed": [
+        "tools",
+        "environment",
+        "vector-store",
+        "llm-reason"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-007",
+        "T-008",
+        "T-013",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "tools",
+          "component_type": "tool-executor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-007",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 3,
+          "component": "vector-store",
+          "component_type": "vector-store",
+          "tactic": "Persistence",
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "threat_id": "T-013",
+          "threat_subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 4,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Lateral Movement",
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
+    },
+    {
+      "id": "AP-006",
+      "name": "Initial Access via environment -> Lateral Movement on llm-reason",
+      "severity": "Critical",
+      "score": 78,
+      "rank": 2,
+      "entry_point": "environment",
+      "target": "llm-reason",
+      "components_traversed": [
+        "environment",
+        "vector-store",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-008",
+        "T-013",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "vector-store",
+          "component_type": "vector-store",
+          "tactic": "Persistence",
+          "technique_id": "AML.T0070",
+          "technique_name": "RAG Poisoning",
+          "framework": "ATLAS",
+          "threat_id": "T-013",
+          "threat_subcategory": "Unvalidated Input to Data Store - Data Poisoning Risk",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Lateral Movement",
+          "technique_id": "AML.T0091",
+          "technique_name": "Use Alternate Authentication Material",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
+    },
+    {
+      "id": "AP-001",
+      "name": "Initial Access via user -> Execution on llm-reason",
+      "severity": "Critical",
+      "score": 75,
+      "rank": 3,
+      "entry_point": "user",
+      "target": "llm-reason",
+      "components_traversed": [
+        "user",
+        "query",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-001",
+        "T-003",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "user",
+          "component_type": "actor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 2,
+          "component": "query",
+          "component_type": "input",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-003",
+          "threat_subcategory": "Unauthenticated Internet-Facing Component",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "This is a critical-severity attack path that exploits a complete absence of authentication controls from the public boundary all the way into the AI reasoning core. An attacker requires no valid credentials or identity verification to enter the system - they simply cross the user boundary unchallenged and submit queries directly to an internet-facing component that performs no authentication checks. Because this unauthenticated access flows without interruption into the LLM reasoning layer, the attacker arrives at the orchestration engine with full interaction capability. Once inside the llm-reason component, the absence of access controls on the infrastructure means the attacker can invoke AI agent tools directly, turning the reasoning layer into an execution environment under their control. The path from anonymous external user to unrestricted AI orchestration is completely unobstructed.",
+      "step_walkthrough": [
+        {
+          "step": 1,
+          "threat_explanation": "At this step, the attacker crosses the user-facing boundary of the system without any authentication challenge - no login, no token, no identity verification is enforced (MITRE Initial Access: Valid Accounts exploitation via Unauthenticated Boundary Crossing). This means any anonymous actor on the internet can enter the system as if they were a legitimate user. There is no gate to stop them."
+        },
+        {
+          "step": 2,
+          "threat_explanation": "The attacker's unauthenticated request reaches the query component, which is directly internet-facing and applies no authentication controls of its own (MITRE Initial Access: Valid Accounts, Unauthenticated Internet-Facing Component). This compounds Step 1 - not only did the boundary fail to block the attacker, but the query interface also performs no validation of who is submitting requests. The attacker can craft and submit arbitrary queries with no restriction."
+        },
+        {
+          "step": 3,
+          "threat_explanation": "The unauthenticated, adversary-controlled query now reaches the llm-reason component - the AI reasoning and orchestration engine (MITRE Execution: AI Agent Tool Invocation). Because there are no access controls on this infrastructure, the attacker can directly invoke AI agent tools. Concretely, this means they can trigger downstream tool calls, manipulate the reasoning pipeline, exfiltrate data surfaced by the agent, inject malicious instructions into the orchestration flow, abuse any connected APIs or data sources the agent has access to, and potentially use the agent as a pivot point to reach other systems it is authorized to interact with."
+        }
+      ],
+      "business_impact": "An unauthenticated attacker with unrestricted access to your AI reasoning and orchestration layer can manipulate the outputs your customers and employees receive, inject false or harmful content into AI-driven workflows, and abuse connected systems - exposing your organization to severe reputational damage, loss of customer trust, and regulatory scrutiny under frameworks such as the EU AI Act, GDPR, and NIST AI RMF, which mandate demonstrable controls over AI system access and integrity."
+    },
+    {
+      "id": "AP-003",
+      "name": "Initial Access via tools -> Execution on llm-reason",
+      "severity": "High",
+      "score": 75,
+      "rank": 4,
+      "entry_point": "tools",
+      "target": "llm-reason",
+      "components_traversed": [
+        "tools",
+        "environment",
+        "llm-reason"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-007",
+        "T-008",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "tools",
+          "component_type": "tool-executor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-007",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "environment",
+          "component_type": "external-system",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-008",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 3,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "An attacker gains entry through the tools component by exploiting valid, legitimate credentials - bypassing authentication entirely rather than breaking it. Because neither the tools nor the environment components have logging in place, this lateral movement goes completely undetected as the attacker advances from tools into the execution environment. The absence of access controls on the LLM reasoning component then allows the attacker to invoke AI agent tools directly, without any orchestration-level checks standing in their way. This chain succeeds not because of a single catastrophic flaw, but because three consecutive components share the same blind spots: no visibility and no enforcement. By the time the attacker reaches the LLM reasoning layer, they have full, uncontested influence over how the AI agent thinks and acts.",
+      "step_walkthrough": [
+        {
+          "step": 1,
+          "threat_explanation": "Using valid account credentials - likely stolen, reused, or left unrotated - the attacker authenticates to the tools component as a trusted user. Under MITRE tactic Initial Access via the Valid Accounts technique, this means no alarm is raised and no authentication failure is logged. Critically, because this component is internet-facing with no logging, there is no audit trail of who accessed it, when, or from where. The attacker is invisible from the moment they walk in."
+        },
+        {
+          "step": 2,
+          "threat_explanation": "Carrying the same or inherited credentials, the attacker pivots from the tools component into the execution environment - again using Valid Accounts under the Initial Access tactic. This step is possible because the environment component shares the same weakness: it is internet-facing and produces no logs. This means the lateral movement between steps 1 and 2 is not just undetected - it is undetectable after the fact, eliminating any forensic opportunity to reconstruct the intrusion."
+        },
+        {
+          "step": 3,
+          "threat_explanation": "Now inside the environment, the attacker reaches the LLM reasoning component, which has no access controls on its infrastructure. Under the Execution tactic using the AI Agent Tool Invocation technique, the attacker can directly invoke tools through the AI agent without any orchestration-level gate or identity check stopping them. At this point the attacker can manipulate the reasoning outputs of the AI agent - injecting false context, altering decisions the agent makes on behalf of users, triggering unintended tool calls, exfiltrating data that the agent has access to through its tool integrations, or causing the agent to take destructive actions within the systems it is connected to."
+        }
+      ],
+      "business_impact": "Because the compromised LLM reasoning component directly shapes outputs visible to end users and downstream systems, any manipulation of its behavior - whether to spread false information, make flawed decisions, or expose sensitive data - carries serious reputational damage and potential regulatory exposure under frameworks such as the EU AI Act, GDPR, and SOC 2, where auditability and integrity of automated decision-making are explicit requirements."
+    },
+    {
+      "id": "AP-007",
+      "name": "Initial Access via response -> Execution on llm-reason",
+      "severity": "Critical",
+      "score": 75,
+      "rank": 5,
+      "entry_point": "response",
+      "target": "llm-reason",
+      "components_traversed": [
+        "response",
+        "user",
+        "query",
+        "llm-reason"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-009",
+        "T-001",
+        "T-003",
+        "T-015"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "response",
+          "component_type": "output",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-009",
+          "threat_subcategory": "Internet-Facing Component Without Logging",
+          "threat_severity": "High"
+        },
+        {
+          "step": 2,
+          "component": "user",
+          "component_type": "actor",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "query",
+          "component_type": "input",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-003",
+          "threat_subcategory": "Unauthenticated Internet-Facing Component",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 4,
+          "component": "llm-reason",
+          "component_type": "llm",
+          "tactic": "Execution",
+          "technique_id": "AML.T0053",
+          "technique_name": "AI Agent Tool Invocation",
+          "framework": "ATLAS",
+          "threat_id": "T-015",
+          "threat_subcategory": "No Access Controls on Infrastructure - Orchestration Attack Risk",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
+    }
+  ],
+  "additional_risks": [
+    {
+      "component": "llm-reason",
+      "risk": "In an agentic architecture where the LLM reasoning component both plans and selects tools, a prompt injection embedded in retrieved vector-store content or tool outputs can hijack the agent's reasoning loop, causing it to chain unintended tool calls or exfiltrate data across multiple autonomous steps. Because the LLM cannot distinguish between its instructions and adversarial content injected mid-pipeline, a single poisoned retrieval result can cascade into full agent goal hijacking.",
+      "suggested_mitigation": "Implement a structured output schema with a sandboxed instruction parser that separates system-level directives from retrieved or tool-returned content, and enforce a cryptographically signed instruction boundary so only the originating orchestrator can issue new goal directives to the reasoning loop."
+    },
+    {
+      "component": "tools",
+      "risk": "The tools component, invoked autonomously by the LLM reasoning layer, likely shares a single execution identity or credential set across all tool invocations, meaning a compromised or manipulated tool call can laterally access resources intended for other tool functions without any per-action authorization check. This over-privileged tool executor pattern turns any successful prompt injection or logic manipulation into a privilege escalation path across the environment.",
+      "suggested_mitigation": "Enforce least-privilege per-tool credentials using short-lived, scoped tokens issued at invocation time by an intermediary authorization service, and require explicit capability declarations per tool that are validated against an allowlist before each LLM-directed call."
+    },
+    {
+      "component": "vector-store",
+      "risk": "With two vector-store instances present in the architecture, there is a design-level risk of inconsistent retrieval trust boundaries where one store may serve external or user-contributed embeddings while the other serves curated internal knowledge, but the llm-reason component treats both as equally authoritative sources without differentiation. This symmetric trust assignment allows attacker-influenced embeddings from the less-trusted store to override or contaminate reasoning grounded in the trusted store.",
+      "suggested_mitigation": "Tag all retrieved chunks with a provenance trust tier at embedding time and enforce retrieval-time trust context propagation so the LLM reasoning component applies differential weighting and explicit source attribution, refusing to use lower-trust store content for security-sensitive decision branches."
+    }
+  ]
+}

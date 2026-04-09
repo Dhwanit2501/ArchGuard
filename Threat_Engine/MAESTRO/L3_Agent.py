@@ -54,7 +54,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M3-01: No input validation (Input Validation Attacks)
         #
-        # MAESTRO L3: Input Validation Attacks — exploiting weaknesses in
+        # MAESTRO L3: Input Validation Attacks - exploiting weaknesses in
         # how the AI framework handles user inputs, allowing for code
         # injection and potential system compromise of AI agent systems.
         #
@@ -84,7 +84,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.TAMPERING,
                 maestro_layer= LAYER,
-                subcategory  = "No Input Validation on Framework — Input Validation Attack Risk",
+                subcategory  = "No Input Validation on Framework - Input Validation Attack Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no input validation "
@@ -99,14 +99,14 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 mitigations  = [
                     "Implement strict input validation on all framework entry points",
                     "Sanitize and normalize all user inputs before passing to framework",
-                    "Apply allowlist-based input validation — reject anything not explicitly permitted",
+                    "Apply allowlist-based input validation - reject anything not explicitly permitted",
                     "Use a dedicated input validation layer before the framework processes requests",
                 ],
             ))
 
         # M3-02: No rate limiting or resource limits (DoS on Framework APIs)
         #
-        # MAESTRO L3: Denial of Service on Framework APIs — disrupting the AI
+        # MAESTRO L3: Denial of Service on Framework APIs - disrupting the AI
         # framework's ability to function, overloading services and preventing
         # normal operation for the AI agents.
         #
@@ -128,7 +128,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer= LAYER,
-                subcategory  = "No Rate Limiting or Resource Limits on Framework — DoS Risk",
+                subcategory  = "No Rate Limiting or Resource Limits on Framework - DoS Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no rate limiting "
@@ -150,7 +150,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M3-03: No integrity verification (Compromised Framework Components)
         #
-        # MAESTRO L3: Compromised Framework Components — malicious code in
+        # MAESTRO L3: Compromised Framework Components - malicious code in
         # libraries or modules used by AI frameworks, compromising the
         # functionality of the framework and leading to unexpected results.
         #
@@ -171,7 +171,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.TAMPERING,
                 maestro_layer= LAYER,
-                subcategory  = "No Integrity Verification on Framework — Compromised Component Risk",
+                subcategory  = "No Integrity Verification on Framework - Compromised Component Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no integrity "
@@ -193,7 +193,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M3-04: No dependency verification (Supply Chain Attacks)
         #
-        # MAESTRO L3: Supply Chain Attacks — targeting the AI framework's
+        # MAESTRO L3: Supply Chain Attacks - targeting the AI framework's
         # dependencies, compromising software before delivery and distribution,
         # resulting in compromised AI agent software.
         #
@@ -214,7 +214,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.TAMPERING,
                 maestro_layer= LAYER,
-                subcategory  = "No Dependency Verification on Framework — Supply Chain Attack Risk",
+                subcategory  = "No Dependency Verification on Framework - Supply Chain Attack Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no dependency "
@@ -237,7 +237,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
 
         # M3-05: No output filtering or security controls (Framework Evasion)
         #
-        # MAESTRO L3: Framework Evasion — AI agents specifically designed to
+        # MAESTRO L3: Framework Evasion - AI agents specifically designed to
         # bypass security controls within the framework, using advanced techniques
         # to perform unauthorized actions.
         #
@@ -258,7 +258,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.ELEVATION_OF_PRIVILEGE,
                 maestro_layer= LAYER,
-                subcategory  = "No Output Filtering on Framework — Framework Evasion Risk",
+                subcategory  = "No Output Filtering on Framework - Framework Evasion Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' ({node.get('type')}) has no output filtering "

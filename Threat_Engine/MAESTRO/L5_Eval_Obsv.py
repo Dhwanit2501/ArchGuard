@@ -21,7 +21,7 @@ Design-Time Detectable Rules:
     M5-05: No audit log integrity controls (Poisoning Observability Data)
 
 Excluded Threats (not detectable from architecture schema):
-    - Evasion of Detection: requires runtime behavioral analysis — the agent must
+    - Evasion of Detection: requires runtime behavioral analysis - the agent must
       be executing for evasion patterns to be observable. Cannot be detected from
       architecture schema alone.
 """
@@ -75,7 +75,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.TAMPERING,
                 maestro_layer = LAYER,
-                subcategory   = "No Evaluation Integrity Controls — Evaluation Metric Manipulation Risk",
+                subcategory   = "No Evaluation Integrity Controls - Evaluation Metric Manipulation Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no evaluation integrity "
@@ -104,7 +104,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         #
         # Design-time signal: no logging defined on the component. Without
         # monitoring, attackers can inject malicious code into the observability
-        # layer and operate undetected — there is no monitoring process to
+        # layer and operate undetected - there is no monitoring process to
         # compromise or rely on.
 
         if not node.get("logging", False):
@@ -115,7 +115,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.REPUDIATION,
                 maestro_layer = LAYER,
-                subcategory   = "No Monitoring on AI Component — Compromised Observability Risk",
+                subcategory   = "No Monitoring on AI Component - Compromised Observability Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no monitoring or logging "
@@ -158,7 +158,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer = LAYER,
-                subcategory   = "No Resource Limits on Agent Component — DoS on Evaluation Infrastructure Risk",
+                subcategory   = "No Resource Limits on Agent Component - DoS on Evaluation Infrastructure Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no resource limits or "
@@ -210,7 +210,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.INFORMATION_DISCLOSURE,
                 maestro_layer = LAYER,
-                subcategory   = "No Log Sanitization on Sensitive Data Handler — Observability Data Leakage Risk",
+                subcategory   = "No Log Sanitization on Sensitive Data Handler - Observability Data Leakage Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) handles sensitive assets "
@@ -248,7 +248,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component     = node["id"],
                 category      = StrideCategory.REPUDIATION,
                 maestro_layer = LAYER,
-                subcategory   = "No Audit Log Integrity Controls — Observability Data Poisoning Risk",
+                subcategory   = "No Audit Log Integrity Controls - Observability Data Poisoning Risk",
                 severity      = severity,
                 description   = (
                     f"'{node['id']}' ({node.get('type')}) has no audit log integrity "

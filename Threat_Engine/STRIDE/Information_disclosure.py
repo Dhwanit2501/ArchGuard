@@ -164,7 +164,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                     f"Flow '{edge.get('flow_id', '?')}' carries sensitive assets "
                     f"({', '.join(assets)}) from '{edge['src']}' "
                     f"[{src_zone.get('trust_level')}] to '{edge['dst']}' "
-                    f"[{dst_zone.get('trust_level')}] — a zone with lower trust. "
+                    f"[{dst_zone.get('trust_level')}] - a zone with lower trust. "
                     f"Sensitive data should never flow to less trusted environments."
                 ),
                 sources     = [SOURCE],
@@ -221,7 +221,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             mitigations = [
                 "Encrypt all internal flows carrying sensitive data",
                 "Implement a service mesh with automatic mTLS",
-                "Apply least-privilege data access — only pass what each service needs",
+                "Apply least-privilege data access - only pass what each service needs",
             ],
         ))
 

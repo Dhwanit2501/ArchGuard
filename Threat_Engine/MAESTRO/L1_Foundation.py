@@ -52,7 +52,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
         trust_level = node_zone.get("trust_level", "medium")
 
         # M1-01: No input validation (Adversarial Examples)
-        # MAESTRO L1: Adversarial Examples — inputs specifically crafted
+        # MAESTRO L1: Adversarial Examples - inputs specifically crafted
         # to fool the AI model into making incorrect predictions or behave
         # in unexpected ways, causing instability or incorrect responses.
         has_input_validation = node.get("input_validation", False)
@@ -73,12 +73,12 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.TAMPERING,
                 maestro_layer= LAYER,
-                subcategory  = "No Input Validation — Adversarial Example Risk",
+                subcategory  = "No Input Validation - Adversarial Example Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' receives input from untrusted sources but "
-                    f"has no input validation defined. Adversarial inputs — "
-                    f"specifically crafted to fool the model — have a direct "
+                    f"has no input validation defined. Adversarial inputs - "
+                    f"specifically crafted to fool the model - have a direct "
                     f"path to the foundation model, causing incorrect predictions, "
                     f"instability, or unexpected behavior from the AI."
                 ),
@@ -94,7 +94,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ))
 
         # M1-02: LLM exposed without auth or rate limiting (Model Stealing)
-        # MAESTRO L1: Model Stealing — attackers extracting a copy of the AI
+        # MAESTRO L1: Model Stealing - attackers extracting a copy of the AI
         # model through repeated API queries, resulting in IP theft or
         # competitive disadvantage.
         has_rate_limiting = node.get("rate_limiting", False)
@@ -112,13 +112,13 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.INFORMATION_DISCLOSURE,
                 maestro_layer= LAYER,
-                subcategory  = "LLM Accessible Without Auth or Rate Limiting — Model Stealing Risk",
+                subcategory  = "LLM Accessible Without Auth or Rate Limiting - Model Stealing Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' accepts unauthenticated requests and has "
                     f"no rate limiting defined. An attacker can issue unlimited "
                     f"systematic queries to extract a functional copy of the model "
-                    f"through API interactions — a model stealing attack resulting "
+                    f"through API interactions - a model stealing attack resulting "
                     f"in intellectual property theft or competitive disadvantage."
                 ),
                 sources      = [SOURCE],
@@ -133,7 +133,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ))
 
         # M1-03: No content policy (Reprogramming Attacks)
-        # MAESTRO L1: Reprogramming Attacks — repurposing the AI model for
+        # MAESTRO L1: Reprogramming Attacks - repurposing the AI model for
         # a malicious task different from its original intent, manipulating
         # the model for unexpected and harmful uses.
         has_content_policy = node.get("content_policy", False)
@@ -146,13 +146,13 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.ELEVATION_OF_PRIVILEGE,
                 maestro_layer= LAYER,
-                subcategory  = "No Content Policy — Reprogramming Attack Risk",
+                subcategory  = "No Content Policy - Reprogramming Attack Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' has no content policy defined. Without "
                     f"explicit boundaries on permitted tasks and outputs, the "
                     f"model can be repurposed for malicious tasks different from "
-                    f"its original intent — a reprogramming attack that manipulates "
+                    f"its original intent - a reprogramming attack that manipulates "
                     f"the model for unexpected and harmful uses."
                 ),
                 sources      = [SOURCE],
@@ -167,7 +167,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
             ))
 
         # M1-04: No rate limiting or resource controls (Denial of Service)
-        # MAESTRO L1: Denial of Service — overwhelming foundation models with
+        # MAESTRO L1: Denial of Service - overwhelming foundation models with
         # computationally expensive queries or adversarially crafted inputs
         # (sponge attacks) to exhaust resources, degrade inference performance,
         # or cause service unavailability. Results in operational downtime,
@@ -182,7 +182,7 @@ def run(graph: GraphInterface, arch: dict) -> list[Threat]:
                 component    = node["id"],
                 category     = StrideCategory.DENIAL_OF_SERVICE,
                 maestro_layer= LAYER,
-                subcategory  = "No Rate Limiting or Resource Controls — DoS Risk",
+                subcategory  = "No Rate Limiting or Resource Controls - DoS Risk",
                 severity     = severity,
                 description  = (
                     f"'{node['id']}' has no rate limiting or resource controls "
