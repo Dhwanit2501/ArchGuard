@@ -1083,7 +1083,7 @@
       "mitigations": [
         "Encrypt all internal flows carrying sensitive data",
         "Implement a service mesh with automatic mTLS",
-        "Apply least-privilege data access \u2014 only pass what each service needs"
+        "Apply least-privilege data access - only pass what each service needs"
       ],
       "data_flow": "df3",
       "assets": [
@@ -1128,7 +1128,7 @@
       "mitigations": [
         "Encrypt all internal flows carrying sensitive data",
         "Implement a service mesh with automatic mTLS",
-        "Apply least-privilege data access \u2014 only pass what each service needs"
+        "Apply least-privilege data access - only pass what each service needs"
       ],
       "data_flow": "df4",
       "assets": [
