@@ -1,0 +1,155 @@
+{
+  "project": {
+    "name": "E-Commerce Microservices (Secured)",
+    "id": "ecommerce-microservices-secured",
+    "architecture_type": "software"
+  },
+  "architecture": "architecture_examples/S1_secured.yaml",
+  "is_agentic": false,
+  "backend": "networkx",
+  "stride_count": 3,
+  "maestro_count": 0,
+  "total_before_dedup": 3,
+  "total_after_dedup": 3,
+  "threats": [
+    {
+      "id": "T-001",
+      "component": "web-browser",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'web-browser' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=web-browser",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-002",
+      "component": "mobile-app",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'mobile-app' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=mobile-app",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    },
+    {
+      "id": "T-003",
+      "component": "api-gateway",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'api-gateway' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=api-gateway",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ]
+    }
+  ],
+  "attack_paths": []
+}

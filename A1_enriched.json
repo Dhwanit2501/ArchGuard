@@ -72,7 +72,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The llm-reason component accepts incoming data flow df2 without verifying the identity of the source, meaning any caller can interact with it as if they were a trusted system. An attacker could impersonate a legitimate upstream component to inject malicious prompts, manipulated context, or false instructions directly into the reasoning engine. Because llm-reason is the core decision-making component, unauthenticated input here can corrupt the entire agent's behavior, leading to unauthorized actions, data leakage, or full compromise of the agent's outputs."
+      "threat_context": "The llm-reason component accepts inputs across a trust boundary (via dataflow df2) without requiring authentication, meaning any caller-including malicious agents or compromised upstream components-can inject arbitrary reasoning instructions or context into the LLM reasoning engine. An attacker could exploit this by sending crafted prompts or falsified context through the unauthenticated boundary to manipulate the agent's decision-making, redirect its actions, or extract sensitive information embedded in the reasoning chain. In an agentic architecture, the reasoning component is the cognitive core that drives downstream tool calls and actions, so a successful spoofing attack here can cascade into unauthorized command execution, data exfiltration, or full agent compromise."
     },
     {
       "id": "T-002",
@@ -132,7 +132,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-003",
@@ -193,7 +193,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The llm-reason component accepts incoming data flows (df5) without requiring any authentication, meaning any caller can send inputs to this reasoning engine without proving who they are. An attacker could exploit this by injecting malicious prompts or manipulated data directly into the LLM reasoning process, potentially hijacking its decision-making or causing it to take harmful actions on behalf of the attacker. This is critical because the reasoning component is the cognitive core of the agentic system \u2014 compromising it without authentication barriers means an attacker can influence all downstream decisions and actions the agent takes."
+      "threat_context": "The llm-reason component accepts inputs crossing a trust boundary without validating the identity or integrity of the source, meaning any caller on dataflow df5 can inject reasoning inputs as if they were a legitimate, trusted system component. An attacker could exploit this by sending crafted prompts or manipulated context data directly into the reasoning layer, bypassing any upstream access controls and potentially hijacking the agent's decision-making pipeline through prompt injection or goal manipulation. In an agentic architecture, this is critical because the reasoning component drives downstream actions and tool invocations, so a successfully spoofed input can cascade into unauthorized operations, data exfiltration, or full agent compromise."
     },
     {
       "id": "T-004",
@@ -253,7 +253,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The vector-store component accepts incoming data flows (df10) across a trust boundary without requiring any authentication, meaning any process or user can read from or write to it without proving their identity. An attacker could exploit this by injecting poisoned or manipulated vector embeddings into the store, causing the AI agent to retrieve and act on false or malicious context during retrieval-augmented generation. This is critical because the vector store is a foundational source of truth for the agent's reasoning, and undetected data poisoning here can silently corrupt every downstream decision the agent makes."
+      "threat_context": "The vector-store component accepts inbound data flows (df10) without enforcing authentication, meaning any process or external actor can read from or write to the embedding index without proving identity. An attacker could exploit this by injecting poisoned vectors or retrieval-manipulating embeddings into the store, causing the AI agent to retrieve adversarially crafted context that skews its reasoning or outputs. In an agentic-AI architecture, this is critical because the vector-store is a core memory and retrieval substrate - compromising it undermines the integrity of every downstream inference, tool call, or decision the agent makes."
     },
     {
       "id": "T-005",
@@ -313,7 +313,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-006",
@@ -371,7 +371,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The user component is allowed to cross a trust boundary without being authenticated, meaning the system cannot verify who is actually sending requests. An attacker could impersonate a legitimate user by simply sending requests across this boundary with no credentials required, gaining unauthorized access to the AI agent's capabilities or data. This is critical because in an agentic AI architecture, unauthenticated users could trigger autonomous actions, manipulate agent behavior, or access sensitive outputs with no accountability or traceability."
+      "threat_context": "The user component lacks authentication enforcement at a trust boundary crossing on dataflow df9, meaning any actor-legitimate or malicious-can interact with the agentic-AI system without proving their identity. An attacker can impersonate a legitimate user, inject malicious inputs, or hijack sessions by simply crafting requests that cross this boundary unchallenged. In an agentic-AI architecture, this is critical because unauthenticated access can allow adversaries to issue arbitrary instructions to autonomous agents, manipulate task execution, or exfiltrate sensitive data processed by the AI pipeline."
     },
     {
       "id": "T-007",
@@ -418,7 +418,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The user-facing component of this agentic AI system is accessible from the internet without requiring authentication, meaning anyone can interact with it while pretending to be a legitimate user. An attacker could exploit this by sending requests that impersonate trusted users, potentially hijacking AI agent sessions, injecting malicious instructions, or triggering unauthorized actions on behalf of fabricated identities. This is critical because unauthenticated access to an AI agent's user interface removes the primary trust boundary, allowing adversaries to manipulate the agent's behavior with no accountability or access control standing in their way."
+      "threat_context": "The user component is exposed to the internet without any authentication mechanism, meaning any arbitrary actor can interact with it while impersonating a legitimate user. An attacker can craft requests that spoof a valid user identity, injecting malicious instructions or prompts into the agentic AI pipeline without any credential validation stopping them. In an agentic AI architecture this is critical because downstream AI agents will act on those spoofed inputs with potentially elevated trust, executing harmful actions, exfiltrating data, or manipulating multi-step workflows as if authorized."
     },
     {
       "id": "T-008",
@@ -465,7 +465,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The query component is exposed to the internet without any authentication, meaning anyone can send requests to it and impersonate legitimate users or systems. An attacker can craft malicious queries, flood the component with unauthorized requests, or manipulate inputs to extract sensitive data or influence the AI agent's behavior without ever proving who they are. This is critical because an unauthenticated internet-facing query endpoint is the front door to the entire agentic-AI pipeline, and compromising it undermines the integrity and confidentiality of every downstream action the agent takes."
+      "threat_context": "The query component is exposed to the internet without any authentication mechanism, meaning any external actor can submit queries as if they were a legitimate user or system. An attacker can exploit this by sending crafted queries to extract data, manipulate system behavior, or impersonate trusted clients without needing valid credentials. For an agentic AI architecture, this is critical because unauthenticated queries can drive agent decision-making, tool invocation, or downstream actions with full trust context, effectively letting an attacker hijack agent behavior from the internet."
     },
     {
       "id": "T-009",
@@ -512,7 +512,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The tools component in this agentic AI system is exposed to the internet without any authentication, meaning anyone can send it requests as if they were a legitimate user or orchestrator. An attacker could exploit this by directly invoking the tools to execute actions, exfiltrate data, or manipulate the AI agent's behavior by injecting malicious inputs that appear to come from a trusted source. This is critical because tools in agentic AI architectures often have real-world effects such as calling APIs, querying databases, or executing code, so unauthorized access can lead to immediate and significant harm."
+      "threat_context": "The tools component is exposed to the internet without any authentication mechanism, meaning any external actor can invoke it as if they were a legitimate caller. An attacker can directly call tool endpoints to execute arbitrary tool actions, inject malicious inputs, or chain tool calls to manipulate downstream agent behavior or data without needing to compromise any credentials. In an agentic architecture, tools represent privileged execution surfaces that perform real-world actions, so unauthenticated access effectively grants an adversary the full operational capability of the agent with no accountability or access control barrier."
     },
     {
       "id": "T-010",
@@ -559,7 +559,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The response component is exposed to the internet without any authentication, meaning anyone on the internet can interact with it while pretending to be a legitimate user or system. An attacker could send forged requests to the response component, impersonating trusted agents or orchestrators within the agentic AI pipeline to inject malicious instructions or manipulate outputs. This is critical because a compromised response component can corrupt the AI system's outputs downstream, deceiving end users or triggering harmful automated actions based on spoofed data."
+      "threat_context": "The response component is exposed to the internet without any authentication mechanism, meaning any external actor can send crafted inputs that impersonate legitimate responses from trusted sources. An attacker could inject forged responses into the pipeline, causing downstream agents or consumers to act on malicious data as if it were authoritative output from the system. In an agentic-AI architecture, this is critical because poisoned responses can propagate through chained agent actions, silently corrupting decisions, exfiltrating data, or triggering unintended automated workflows at scale."
     },
     {
       "id": "T-011",
@@ -617,7 +617,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The llm-reason component, which handles core reasoning and decision-making in the agentic AI system, is directly accessible from an untrusted network zone without proper authentication or boundary controls. An attacker could send crafted inputs directly to this component, bypassing any upstream validation or access controls, effectively impersonating a legitimate internal caller and manipulating the AI's reasoning process. This is critical because compromising the reasoning engine can cause the entire agent to make malicious decisions, leak sensitive context, or be hijacked to perform unintended actions."
+      "threat_context": "The llm-reason component, which serves as the core reasoning engine for the agentic AI system, is directly reachable from an untrusted network zone without an intermediary trust boundary or authentication enforcement layer. An attacker can craft and inject malicious prompts or manipulated reasoning inputs directly into the LLM reasoning pipeline, bypassing any upstream input validation, context sanitization, or orchestration controls that would normally gate access. This is critical because compromising the reasoning component allows an adversary to hijack agent decision-making, forge trusted internal reasoning chains, and cause the agent to take unauthorized or destructive downstream actions as if they were legitimately reasoned outputs."
     },
     {
       "id": "T-012",
@@ -683,7 +683,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The data flow 'df2' between the llm-reason component and another system crosses a trust boundary without encryption, meaning the data is transmitted in plaintext over the network. An attacker positioned on the network path (e.g., via a man-in-the-middle attack) could intercept and modify the reasoning inputs or outputs of the LLM, injecting malicious instructions or corrupting its conclusions without detection. This is critical because tampered reasoning data can silently corrupt the AI agent's decisions, causing it to take harmful or unintended actions based on attacker-controlled logic."
+      "threat_context": "The llm-reason component transmits data flow df2 across a trust boundary without encryption, exposing reasoning inputs and outputs in plaintext to any adversary with network access. An attacker positioned between components (e.g., via ARP spoofing, rogue node, or compromised network segment) can intercept and modify prompts, intermediate reasoning steps, or responses before they reach their destination, directly undermining the integrity of the AI agent's decision-making. In an agentic architecture, tampered reasoning flows can cascade into corrupted actions, tool invocations, or policy violations executed with the agent's full authority, making this a critical risk multiplier beyond simple data disclosure."
     },
     {
       "id": "T-013",
@@ -749,7 +749,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-014",
@@ -815,7 +815,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The vector store is sending or receiving data across a network or trust boundary without encryption, meaning the contents of that data flow (df10) are exposed in plaintext as they travel between components. An attacker with access to the network path\u2014such as through a man-in-the-middle position or by monitoring internal traffic\u2014could intercept and read the vector embeddings and associated data, or worse, inject modified vectors to corrupt the AI's retrieval results and manipulate its outputs. This is critical because tampered vector data could silently redirect the AI agent's behavior by poisoning its knowledge retrieval, and stolen embeddings can also expose sensitive information encoded within them."
+      "threat_context": ""
     },
     {
       "id": "T-015",
@@ -881,7 +881,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-016",
@@ -945,7 +945,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The data flow df9 associated with the user component crosses a trust boundary without encryption, meaning the data is transmitted in plaintext over the network. An attacker positioned between the user and the system (e.g., via a man-in-the-middle attack on the same network) could intercept and modify this data in transit without detection. This is critical because tampering with unencrypted user-bound data can lead to session hijacking, credential theft, or injection of malicious instructions directly into the agentic AI system's input pipeline."
+      "threat_context": ""
     },
     {
       "id": "T-017",
@@ -991,7 +991,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-018",
@@ -1046,7 +1046,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-019",
@@ -1089,7 +1089,7 @@
           "url": "https://attack.mitre.org/techniques/T1021/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-020",
@@ -1132,7 +1132,7 @@
           "url": "https://attack.mitre.org/techniques/T1021/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-021",
@@ -1175,7 +1175,7 @@
           "url": "https://attack.mitre.org/techniques/T1021/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-022",
@@ -1222,7 +1222,7 @@
           "url": "https://attack.mitre.org/techniques/T1078/"
         }
       ],
-      "ai_explanation": "When logging is disabled for the user component, there is no record of what actions users took, what requests they made, or what data they accessed within the agentic AI system. An attacker\u2014or even a malicious insider\u2014can perform harmful actions such as issuing unauthorized commands to the AI agent, exfiltrating sensitive data, or manipulating agent behavior, and then credibly deny having done so because no audit trail exists. This is critical because without logs, security teams cannot investigate incidents, detect abuse patterns, or hold users accountable, leaving the entire system's integrity unverifiable."
+      "threat_context": ""
     },
     {
       "id": "T-023",
@@ -1269,7 +1269,7 @@
           "url": "https://attack.mitre.org/techniques/T1078/"
         }
       ],
-      "ai_explanation": "The query component has logging completely disabled, meaning there is no record of what queries are being made, by whom, or when they occur. An attacker\u2014or even a malicious insider\u2014can issue harmful, unauthorized, or data-exfiltrating queries and later deny having done so, since there is no audit trail to prove otherwise. In an agentic AI architecture where the query component drives data retrieval and decision-making, this blind spot makes forensic investigation, accountability, and incident response effectively impossible."
+      "threat_context": ""
     },
     {
       "id": "T-024",
@@ -1316,7 +1316,7 @@
           "url": "https://attack.mitre.org/techniques/T1078/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-025",
@@ -1363,7 +1363,7 @@
           "url": "https://attack.mitre.org/techniques/T1078/"
         }
       ],
-      "ai_explanation": "The response component has logging disabled, meaning no record is kept of what the AI agent actually sends back to users or downstream systems. An attacker\u2014or even a misbehaving internal process\u2014could manipulate, inject, or exfiltrate data through responses without any audit trail to detect or prove it happened. In an agentic AI system where responses may trigger real-world actions, this is critical because you lose all forensic visibility into what the agent did, making incident investigation and accountability impossible."
+      "threat_context": ""
     },
     {
       "id": "T-026",
@@ -1410,7 +1410,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-027",
@@ -1457,7 +1457,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-028",
@@ -1504,7 +1504,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-029",
@@ -1551,7 +1551,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-030",
@@ -1598,7 +1598,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-031",
@@ -1656,7 +1656,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-032",
@@ -1712,7 +1712,7 @@
           "url": "https://attack.mitre.org/techniques/T1552/"
         }
       ],
-      "ai_explanation": "The llm-reason component is transmitting sensitive data across a trust boundary without encryption, meaning the data travels in plaintext over the network between components. An attacker with access to that network path, such as through a man-in-the-middle position or network tap, can intercept and read the sensitive assets contained in data flow df2 without needing to compromise either endpoint. This is critical because the reasoning component likely processes confidential inputs like user data, proprietary context, or intermediate model outputs that, if exposed, could lead to data breaches or enable further targeted attacks."
+      "threat_context": ""
     },
     {
       "id": "T-033",
@@ -1768,7 +1768,7 @@
           "url": "https://attack.mitre.org/techniques/T1552/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-034",
@@ -1824,7 +1824,7 @@
           "url": "https://attack.mitre.org/techniques/T1552/"
         }
       ],
-      "ai_explanation": "The vector store is transmitting sensitive data across a trust boundary (such as between services, networks, or components) without encrypting it in transit, meaning the data flows in plaintext over the wire. An attacker with network access \u2014 through techniques like packet sniffing, man-in-the-middle interception, or compromised network infrastructure \u2014 could read or capture that sensitive data as it travels between components. This is critical because vector stores in agentic AI systems often contain embedded representations of confidential documents, proprietary knowledge, or personal data, and exposing this unencrypted across boundaries gives attackers direct access to that information without needing to breach the store itself."
+      "threat_context": ""
     },
     {
       "id": "T-035",
@@ -1880,7 +1880,7 @@
           "url": "https://attack.mitre.org/techniques/T1552/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-036",
@@ -1936,7 +1936,7 @@
           "url": "https://attack.mitre.org/techniques/T1567/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-037",
@@ -1980,7 +1980,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The user-facing component of this agentic AI system is exposed to the internet without any rate limiting controls, meaning anyone can send unlimited requests to it. An attacker could exploit this by flooding the component with a massive volume of requests\u2014either manually or via a botnet\u2014causing it to become overwhelmed and unavailable to legitimate users. In an agentic AI context this is especially critical because the downstream AI agents and automated workflows could also be disrupted or triggered at scale, amplifying both the availability impact and potential resource costs."
+      "threat_context": ""
     },
     {
       "id": "T-038",
@@ -2024,7 +2024,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The query component is exposed directly to the internet but has no rate limiting controls in place, meaning anyone can send an unlimited number of requests to it without restriction. An attacker can exploit this by flooding the component with massive volumes of queries, overwhelming its processing capacity and making it unavailable to legitimate users. For an agentic AI system, this is critical because the query component is typically central to orchestrating agent tasks, so taking it down halts the entire system's ability to function."
+      "threat_context": ""
     },
     {
       "id": "T-039",
@@ -2068,7 +2068,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": "The tools component in this agentic AI system is accessible from the internet but has no rate limiting in place, meaning anyone can send an unlimited number of requests to it. An attacker could flood the component with requests\u2014either directly or by manipulating the AI agent to repeatedly invoke tools\u2014exhausting compute resources, API quotas, or downstream service limits until the system becomes unresponsive. This is critical because tools are often the action-execution layer of an AI agent, so disabling them can halt the entire agent's ability to function and may also generate significant financial costs from API overuse."
+      "threat_context": ""
     },
     {
       "id": "T-040",
@@ -2112,7 +2112,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-041",
@@ -2156,7 +2156,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-042",
@@ -2190,7 +2190,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-043",
@@ -2224,7 +2224,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-044",
@@ -2258,7 +2258,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-045",
@@ -2292,7 +2292,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-046",
@@ -2326,7 +2326,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-047",
@@ -2371,7 +2371,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-048",
@@ -2416,7 +2416,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-049",
@@ -2461,7 +2461,7 @@
           "url": "https://attack.mitre.org/techniques/T1190/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-050",
@@ -2518,7 +2518,7 @@
           "url": "https://attack.mitre.org/techniques/T1134/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-051",
@@ -2564,7 +2564,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0093/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-052",
@@ -2609,7 +2609,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0024/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-053",
@@ -2667,7 +2667,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-054",
@@ -2713,7 +2713,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-055",
@@ -2758,7 +2758,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0024/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-056",
@@ -2816,7 +2816,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-057",
@@ -2862,7 +2862,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-058",
@@ -2929,7 +2929,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-059",
@@ -2994,7 +2994,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0086/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-060",
@@ -3039,7 +3039,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-061",
@@ -3096,7 +3096,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-062",
@@ -3153,7 +3153,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-063",
@@ -3209,7 +3209,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-064",
@@ -3266,7 +3266,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-065",
@@ -3311,7 +3311,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-066",
@@ -3367,7 +3367,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-067",
@@ -3414,7 +3414,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-068",
@@ -3483,7 +3483,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-069",
@@ -3528,7 +3528,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-070",
@@ -3584,7 +3584,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-071",
@@ -3631,7 +3631,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-072",
@@ -3700,7 +3700,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-073",
@@ -3745,7 +3745,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-074",
@@ -3801,7 +3801,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-075",
@@ -3848,7 +3848,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-076",
@@ -3917,7 +3917,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-077",
@@ -3974,7 +3974,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-078",
@@ -4032,7 +4032,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-079",
@@ -4079,7 +4079,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-080",
@@ -4125,7 +4125,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-081",
@@ -4182,7 +4182,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-082",
@@ -4240,7 +4240,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-083",
@@ -4287,7 +4287,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-084",
@@ -4333,7 +4333,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-085",
@@ -4390,7 +4390,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-086",
@@ -4448,7 +4448,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-087",
@@ -4495,7 +4495,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-088",
@@ -4541,7 +4541,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-089",
@@ -4598,7 +4598,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0099/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-090",
@@ -4656,7 +4656,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-091",
@@ -4703,7 +4703,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-092",
@@ -4749,7 +4749,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-093",
@@ -4796,7 +4796,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-094",
@@ -4842,7 +4842,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-095",
@@ -4898,7 +4898,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-096",
@@ -4955,7 +4955,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-097",
@@ -5002,7 +5002,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-098",
@@ -5048,7 +5048,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-099",
@@ -5105,7 +5105,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-100",
@@ -5152,7 +5152,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-101",
@@ -5198,7 +5198,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-102",
@@ -5255,7 +5255,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-103",
@@ -5302,7 +5302,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0018/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-104",
@@ -5348,7 +5348,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0046/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-105",
@@ -5404,7 +5404,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-106",
@@ -5461,7 +5461,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-107",
@@ -5517,7 +5517,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-108",
@@ -5576,7 +5576,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-109",
@@ -5622,7 +5622,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-110",
@@ -5668,7 +5668,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0084/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-111",
@@ -5724,7 +5724,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0024/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-112",
@@ -5780,7 +5780,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-113",
@@ -5839,7 +5839,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-114",
@@ -5885,7 +5885,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-115",
@@ -5941,7 +5941,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-116",
@@ -6000,7 +6000,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-117",
@@ -6046,7 +6046,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-118",
@@ -6092,7 +6092,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0084/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-119",
@@ -6148,7 +6148,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0024/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-120",
@@ -6204,7 +6204,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-121",
@@ -6263,7 +6263,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0054/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-122",
@@ -6309,7 +6309,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0057/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-123",
@@ -6366,7 +6366,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-124",
@@ -6423,7 +6423,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-125",
@@ -6480,7 +6480,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0048/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-126",
@@ -6538,7 +6538,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0093/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-127",
@@ -6595,7 +6595,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0091/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     },
     {
       "id": "T-128",
@@ -6652,7 +6652,7 @@
           "url": "https://atlas.mitre.org/techniques/AML.T0080/"
         }
       ],
-      "ai_explanation": ""
+      "threat_context": ""
     }
   ],
   "attack_paths": [
@@ -6713,22 +6713,22 @@
           "threat_severity": "Critical"
         }
       ],
-      "ai_narrative": "An attacker begins by crafting inputs that trick the AI system's tools layer into accepting and acting on malicious instructions, exploiting the fact that there is no filtering on what the AI framework outputs. Those outputs are then passed into the broader environment, where the lack of rate limiting on this internet-facing component allows the attacker to freely execute commands or scripts at will. Finally, the attacker uses this foothold to inject poisoned data directly into the vector store, the database the AI uses to retrieve information when answering questions, corrupting it without detection because inputs are never validated. Once the vector store is poisoned, every future response the AI generates that draws on that data can be manipulated to serve the attacker's goals. This entire chain moves from a single evasion of the AI's guardrails to a persistent, silent corruption of the AI's knowledge base.",
-      "ai_step_explanations": [
+      "attack_story": "This is a fully chained, three-stage attack that moves from the AI tool layer through the execution environment and terminates with a persistent compromise of the vector store powering your RAG-based AI system. The attacker begins by crafting inputs that evade the AI framework's safety controls, exploiting the complete absence of output filtering to smuggle malicious instructions through the tools layer undetected. Those instructions are then executed directly in the environment, which is internet-facing and has no rate limiting to slow or detect the attacker's scripted commands. Each step is made possible by the previous one: evasion opens the door, execution carries the payload, and the lack of input validation on the vector store means the attacker can write poisoned data directly into the knowledge base your AI relies on. The result is a persistent, silent corruption of the AI's memory that will continue to affect every response the system generates until detected and remediated.",
+      "step_walkthrough": [
         {
           "step": 1,
-          "explanation": "The attacker sends specially crafted inputs to the AI tools layer that are designed to bypass the AI model's safety checks. Because the framework does not filter or inspect what the AI outputs, the malicious instructions pass through unchallenged, giving the attacker a foothold inside the system."
+          "threat_explanation": "The attacker targets the tools layer by crafting inputs specifically designed to bypass the AI framework's behavioral controls - a technique mapped to MITRE's 'Evade AI Model' under Initial Access. Because there is no output filtering on the framework, the malicious instructions pass through unchallenged. The framework cannot distinguish between a legitimate tool call and an adversarial one, giving the attacker a foothold inside the AI's operational pipeline."
         },
         {
           "step": 2,
-          "explanation": "With access established, the attacker takes advantage of the environment component being exposed to the internet without any rate limiting. This means they can freely and repeatedly run commands or scripts in the environment, escalating their control without being slowed down or blocked."
+          "threat_explanation": "With a foothold established, the attacker leverages the execution environment to run arbitrary commands - mapped to MITRE's Command and Scripting Interpreter technique under the Execution tactic. The critical enabler here is that the environment is internet-facing with no rate limiting, meaning the attacker can send high-volume, scripted command sequences without triggering any throttling or alerting. This converts the initial evasion into active, repeatable code execution within the system."
         },
         {
           "step": 3,
-          "explanation": "The attacker now writes corrupted or misleading data directly into the vector store, which is the knowledge base the AI queries when generating responses. Because the system never validates what goes into this data store, the poisoned entries sit silently alongside legitimate data, causing the AI to produce manipulated answers whenever it retrieves that information."
+          "threat_explanation": "The attacker now turns to the vector store - the long-term knowledge base used by the AI for Retrieval-Augmented Generation. Using the execution capability gained in step two, they inject poisoned embeddings or documents directly into the store, exploiting the fact that there is no input validation on data written to it. This is RAG Poisoning under the Persistence tactic: the attacker does not need to maintain active access because the malicious data now lives inside the AI's knowledge base. Concretely, the attacker can implant false facts, backdoor triggers that cause the AI to produce specific outputs on demand, disinformation that gets served to all downstream users, or corrupted retrieval results that cause the AI to leak sensitive documents already indexed in the store. Every query the AI answers going forward is potentially compromised."
         }
       ],
-      "ai_business_risk": "If exploited, this attack path would allow an adversary to silently and persistently corrupt the information the AI relies on, causing the system to deliver false, harmful, or attacker-controlled outputs to users and decision-makers, potentially damaging customer trust, regulatory standing, and business operations at scale."
+      "business_impact": "A poisoned vector store means every AI-generated response served to customers, employees, or partners may contain attacker-controlled content - creating severe reputational damage, potential regulatory exposure under frameworks such as the EU AI Act, GDPR, and SOC 2, and legal liability if manipulated outputs cause downstream harm to end users."
     },
     {
       "id": "AP-007",
@@ -6801,26 +6801,9 @@
           "threat_severity": "High"
         }
       ],
-      "ai_narrative": "An attacker begins by accessing the internet-facing response component without needing any credentials, giving them an immediate foothold into the system. From there, they exploit an unencrypted communication channel between the response and user components to inject or intercept commands, effectively taking control of that interaction layer. As data moves into the query component, the absence of logging means the attacker can silently harvest credentials or sensitive information stored there without leaving any trace. Finally, the attacker reaches the core reasoning engine of the AI system, where a lack of log sanitization allows them to observe and extract the AI model's outputs, potentially revealing confidential business logic, internal data, or decision-making processes. The entire path goes undetected at multiple stages due to missing authentication, encryption, and logging controls.",
-      "ai_step_explanations": [
-        {
-          "step": 1,
-          "explanation": "The attacker enters the system through the response component, which is exposed to the internet and requires no login or authentication. This means anyone can access it as if they were a legitimate user, giving the attacker an immediate and unrestricted way in."
-        },
-        {
-          "step": 2,
-          "explanation": "Once inside, the attacker moves from the response component to the user component over an unencrypted connection. Because the data crossing this boundary is not protected, the attacker can intercept or inject commands, essentially manipulating what instructions get passed along in the system."
-        },
-        {
-          "step": 3,
-          "explanation": "The attacker reaches the query component, which handles credentials but has logging completely disabled. Without any record of activity here, the attacker can quietly locate and steal stored credentials or sensitive tokens with no audit trail left behind."
-        },
-        {
-          "step": 4,
-          "explanation": "With credentials or access in hand, the attacker reaches the AI reasoning engine. Because sensitive data in this component is not cleaned out of logs before they are stored, the attacker can read through observability data to extract the AI's outputs, internal reasoning, or confidential information it has processed."
-        }
-      ],
-      "ai_business_risk": "If exploited, this attack path could allow an unauthorized outsider to silently steal credentials, manipulate AI system behavior, and extract confidential AI-generated insights or business-sensitive data, all without triggering any alerts or leaving an audit trail."
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
     },
     {
       "id": "AP-001",
@@ -6879,22 +6862,22 @@
           "threat_severity": "High"
         }
       ],
-      "ai_narrative": "An attacker gains access to the system without needing valid credentials, exploiting the fact that there is no authentication check when crossing into the system from the outside. Once inside, they interact with the query component, which is exposed to the internet and has no rate limiting, allowing them to send as many crafted requests as they want without being slowed down or blocked. These requests are designed to manipulate the AI reasoning engine by injecting malicious content into its context, taking advantage of the fact that the framework performs no validation on what it receives. Because the AI reasoning component processes these poisoned inputs without safeguards, the attacker can persistently alter how the AI thinks and responds going forward. The combined effect is that an unauthorized outsider can quietly corrupt the decision-making core of the AI system with little resistance at any stage.",
-      "ai_step_explanations": [
+      "attack_story": "This is a critical-severity attack path that exploits three cascading weaknesses to fully compromise the AI reasoning layer of this agentic architecture. An attacker begins by bypassing the authentication boundary entirely, entering the system without any identity verification. They then weaponize the exposed query interface, which has no rate limiting, to inject malicious instructions at scale. These instructions flow directly into the LLM reasoning component, which accepts them without validation, allowing the attacker to poison the agent's context and bend its decision-making to their will. Because each weakness directly enables the next, there is no natural chokepoint to stop the attack once it begins. The result is an adversary who silently controls what the AI reasons about, decides, and acts upon.",
+      "step_walkthrough": [
         {
           "step": 1,
-          "explanation": "The attacker enters the system as if they were a legitimate user, but there is no authentication or identity check in place to stop them. Because the boundary between the outside world and the system requires no proof of who the user is, anyone can walk in freely."
+          "threat_explanation": "The attacker crosses into the system without authenticating. The 'Unauthenticated Boundary Crossing' weakness means there is no identity check enforced at the user entry point - no login, no token, no API key validation. Using the MITRE technique 'Valid Accounts' in this context means the attacker does not need stolen credentials because the system does not demand them. Anyone who reaches this boundary is treated as a legitimate user, giving the attacker an immediate, unchallenged foothold."
         },
         {
           "step": 2,
-          "explanation": "The attacker uses the query component, which is open to the internet, to send a high volume of specially crafted inputs. Because there is no rate limiting, nothing slows down or blocks this flood of requests, giving the attacker full freedom to probe and manipulate the system repeatedly."
+          "threat_explanation": "Now inside the system, the attacker targets the query interface - the mechanism used to send instructions to the AI. Because this component is internet-facing and has no rate limiting, the attacker can fire an unlimited volume of crafted inputs without triggering any throttle or block. The MITRE technique here is 'Command and Scripting Interpreter,' meaning the query interface itself functions as an execution surface. The attacker uses this to repeatedly inject specifically crafted prompts designed to manipulate the downstream reasoning engine, with no friction stopping them."
         },
         {
           "step": 3,
-          "explanation": "The attacker's crafted inputs reach the AI reasoning engine, which accepts them without checking whether they are safe or legitimate. By injecting malicious content into the AI's working context, the attacker poisons how the AI reasons and responds, and because there is no input validation, this corruption can persist and influence future behavior of the AI."
+          "threat_explanation": "The malicious queries reach the LLM reasoning component, which applies no input validation. This enables 'AI Agent Context Poisoning' - a technique where the attacker embeds false context, adversarial instructions, or conflicting objectives directly into the agent's reasoning session. Because the framework does not sanitize or constrain what enters the reasoning loop, the attacker can manipulate the agent's goals, override its intended behavior, corrupt the outputs it produces, and potentially cause it to invoke downstream tools or APIs with attacker-controlled parameters. At this final target, the attacker can steal sensitive data processed by the agent, cause it to exfiltrate information through connected integrations, manipulate decisions or recommendations it surfaces to users or other systems, and persistently corrupt its reasoning across future interactions within the same session context."
         }
       ],
-      "ai_business_risk": "If exploited, this attack path would allow an unauthorized outsider to silently corrupt the AI system's reasoning and outputs, potentially causing it to make harmful decisions, expose sensitive information, or act against the organization's interests without any visible sign of tampering."
+      "business_impact": "An attacker silently controlling your AI reasoning layer can manipulate the outputs your customers and internal teams rely on, creating direct exposure to reputational collapse, loss of customer trust, and regulatory scrutiny under frameworks such as the EU AI Act and GDPR - particularly where AI-driven decisions affect individuals or handle personal data."
     },
     {
       "id": "AP-003",
@@ -6953,22 +6936,9 @@
           "threat_severity": "High"
         }
       ],
-      "ai_narrative": "An attacker begins by exploiting the AI system's tools layer, which lacks any output filtering, allowing malicious content to pass through unchecked and bypass the AI framework's defenses. That content then reaches the environment layer, which is exposed to the internet without any rate limiting, enabling the attacker to freely execute commands or scripts at scale. Finally, the attacker's malicious input reaches the AI reasoning component, which has no input validation, allowing the attacker to poison the AI's context and manipulate how it thinks and behaves going forward. This means the attacker has effectively implanted persistent, corrupted reasoning into the AI agent without being detected or blocked at any stage. The entire chain succeeds because each component along the route fails to inspect, filter, or limit what passes through it.",
-      "ai_step_explanations": [
-        {
-          "step": 1,
-          "explanation": "The attacker targets the tools layer of the AI system. Because there is no filtering applied to what the tools output, the attacker is able to craft content that evades the AI framework's normal defenses and slip malicious data into the system without triggering any alerts or blocks."
-        },
-        {
-          "step": 2,
-          "explanation": "The malicious content moves into the environment layer, which is directly reachable from the internet and has no rate limiting in place. This allows the attacker to run commands or scripts freely, as many times as needed, without being slowed down or stopped by any protective controls."
-        },
-        {
-          "step": 3,
-          "explanation": "The attacker's content finally reaches the AI reasoning component. Because this component does not validate what it receives as input, the attacker is able to poison the AI's context, meaning they can manipulate the AI's understanding, memory, or decision-making process in a way that persists and influences future behavior."
-        }
-      ],
-      "ai_business_risk": "If exploited, an attacker could permanently corrupt the AI system's reasoning and decision-making, potentially causing it to act against the organization's interests, expose sensitive data, or carry out harmful actions at scale without detection."
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
     },
     {
       "id": "AP-006",
@@ -7013,35 +6983,35 @@
           "threat_severity": "Critical"
         }
       ],
-      "ai_narrative": "An attacker begins by targeting an internet-facing component of the system that has no rate limiting in place, allowing them to send as many requests as they want without being slowed down or blocked. By flooding or probing this entry point freely, the attacker finds a way to push malicious data into the system. They then exploit the fact that the vector store, which holds the knowledge the AI uses to answer questions, accepts data without checking whether it is trustworthy or safe. The attacker injects corrupted or misleading information directly into this knowledge base, a technique known as RAG poisoning. From this point forward, the AI system unknowingly draws on tainted information, producing responses that serve the attacker's goals rather than the organization's.",
-      "ai_step_explanations": [
+      "attack_story": "This is a critical, two-step attack that moves from the internet directly into the AI system's knowledge base with no significant barriers to stop it. The attacker first exploits a public-facing environment component that has no rate limiting, meaning they can probe, hammer, and inject data into it without triggering any throttling or lockout mechanism. Because there is no validation on what data gets written into the vector store, the attacker can use this open channel to inject malicious, manipulated, or fabricated content directly into the knowledge base that the AI retrieves from when generating responses. This technique - RAG Poisoning - corrupts the Retrieval-Augmented Generation pipeline, meaning every future AI response that draws from this store is now potentially tainted. The attacker does not need to stay in the system; once the poisoned data is embedded, the damage propagates automatically through the AI's own outputs.",
+      "step_walkthrough": [
         {
           "step": 1,
-          "explanation": "The attacker targets a publicly accessible part of the system that has no rate limiting, meaning there is nothing stopping them from making unlimited attempts to interact with it. This lack of restriction allows the attacker to probe, manipulate, or overwhelm the component without triggering any defensive response, giving them a reliable foothold to begin the attack."
+          "threat_explanation": "Using the MITRE tactic of Initial Access via Exploit Public-Facing Application, the attacker targets an internet-exposed environment component that enforces no rate limiting. This means the attacker can send unlimited, automated requests - probing for weaknesses, fuzzing inputs, or staging large-scale injection payloads - without being slowed down or blocked. The absence of rate limiting removes one of the most basic defensive controls, making this entry point trivially exploitable at scale and enabling the attacker to establish reliable, repeated access to feed malicious data downstream."
         },
         {
           "step": 2,
-          "explanation": "Once inside, the attacker pushes harmful or false data into the vector store, which is the database the AI uses to retrieve background knowledge when generating answers. Because the system does not validate or verify what data gets written into this store, the attacker's poisoned entries are accepted and stored alongside legitimate information. This means the AI will now reference and act on the attacker's fabricated content as if it were trustworthy."
+          "threat_explanation": "With access established, the attacker pivots to the vector store using the MITRE Persistence tactic via RAG Poisoning. Because the vector store accepts input without validation, the attacker can write manipulated embeddings or fabricated documents directly into the knowledge base. This is not a temporary compromise - it is a persistence mechanism. The poisoned vectors remain in the store and are silently retrieved by the AI during normal operation. The attacker can steal trust by making the AI assert false facts, access sensitive retrieval pathways by embedding misleading context, and damage AI output integrity at scale - causing the system to confidently return attacker-controlled information to every user who triggers an affected query."
         }
       ],
-      "ai_business_risk": "If exploited, this attack path could cause the organization's AI system to silently serve false, manipulated, or harmful information to users and decision-makers, eroding trust, enabling fraud, and potentially causing significant legal or reputational damage before the compromise is even detected."
+      "business_impact": "An attacker who poisons your AI's knowledge base can silently corrupt the information your customers, employees, and partners receive from the system, destroying trust in your AI product and exposing your organization to regulatory penalties under frameworks such as the EU AI Act, GDPR, and SOC 2 - all without triggering a single alert."
     }
   ],
   "additional_risks": [
     {
-      "component": "vector-store",
-      "risk": "With multiple vector stores operating across the architecture and no indication of namespace or tenant isolation, a reasoning agent querying one context domain may retrieve semantically similar embeddings from an unrelated or higher-sensitivity context. This cross-context retrieval leakage could cause confidential data from one user or session to surface in another user's response without any explicit access control violation being detectable.",
-      "suggested_mitigation": "Enforce strict namespace partitioning per user session or trust boundary within the vector store, and apply metadata-based access filters on every retrieval query before results are returned to the reasoning component."
+      "component": "llm-reason + tools",
+      "risk": "The repeated, parallel invocation of reasoning LLMs chained with tool calls creates a risk of recursive or cyclic agentic loops where one agent's tool output becomes another agent's input without a termination or trust boundary check. An adversarial or malformed tool response could cause unbounded chain-of-thought recursion, amplifying prompt injection across multiple reasoning steps before any human-in-the-loop checkpoint is reached.",
+      "suggested_mitigation": "Implement a hard-limit on reasoning chain depth and inter-agent message hops, and enforce a cryptographically signed provenance token on each agent-to-tool message so that any tool response injecting instructions can be traced back to its origin and rejected if it violates the expected schema."
     },
     {
-      "component": "llm-reason",
-      "risk": "The architecture shows multiple chained llm-reason components interacting with tools and environments, creating a multi-hop reasoning chain where an adversarial instruction injected early in the chain can propagate through subsequent reasoning steps and amplify its effect on tool invocations or environment actions. No inter-step validation between reasoning hops means a single compromised intermediate reasoning output can corrupt the entire downstream agentic workflow.",
-      "suggested_mitigation": "Introduce a stateless validation checkpoint between chained reasoning steps that verifies the semantic intent of each intermediate output against the original user query scope before passing it to the next reasoning component or tool."
+      "component": "vector-store + llm-generate",
+      "risk": "With multiple vector stores feeding multiple generation LLMs, there is no described mechanism to ensure that retrieved context from one store is scoped to the authorization level of the requesting user, enabling cross-tenant or cross-session context bleed where one user's embedded data is returned in another user's generated response. This is a design-level access control gap at the retrieval-to-generation handoff, not merely a storage encryption issue.",
+      "suggested_mitigation": "Enforce namespace-level and user-session-scoped metadata filtering on all vector store queries before results are passed to any llm-generate component, and validate that retrieved chunk ownership metadata matches the authenticated user context at the RAG pipeline boundary."
     },
     {
-      "component": "tools",
-      "risk": "With numerous tool instances distributed across the architecture and no described tool invocation authorization model, a compromised or hallucinating llm-reason component could invoke high-impact tools that were intended only for specific workflow stages or privilege levels, effectively achieving privilege escalation through tool misuse. The lack of a capability-bounding contract between reasoning agents and tools means no enforcement exists at the design level to constrain which tools an agent may call based on its role or current task context.",
-      "suggested_mitigation": "Implement a tool invocation policy layer that binds each llm-reason instance to a declared, least-privilege set of permitted tools for its workflow stage, enforcing this as a hard constraint rather than relying on model self-governance."
+      "component": "environment + tools",
+      "risk": "The architecture exposes tools that interact with an external environment, but with multiple parallel tool and environment component instances there is no described coordination or idempotency control, meaning concurrent agentic tool invocations could produce conflicting or duplicated side effects in the environment such as repeated writes, state corruption, or privilege escalation through race conditions. This is a design-level risk arising from the fan-out topology of agents sharing mutable environment state.",
+      "suggested_mitigation": "Introduce a tool invocation broker layer that enforces optimistic locking or a lease-based concurrency model for environment-mutating tool calls, and define explicit idempotency keys that prevent duplicate side effects when multiple llm-reason agents invoke the same tool within overlapping execution windows."
     }
   ]
 }

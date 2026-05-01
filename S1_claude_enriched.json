@@ -1,0 +1,1635 @@
+{
+  "project": {
+    "name": "E-Commerce Microservices",
+    "id": "ecommerce-microservices"
+  },
+  "architecture": "architecture_examples/S1.yaml",
+  "is_agentic": false,
+  "backend": "networkx",
+  "stride_count": 29,
+  "maestro_count": 0,
+  "total_before_dedup": 29,
+  "total_after_dedup": 29,
+  "threats": [
+    {
+      "id": "T-001",
+      "component": "api-gateway",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Boundary Crossing",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df1' crosses a trust boundary from 'web-browser' to 'api-gateway' without authentication. An attacker can impersonate any client and send arbitrary requests without proving identity.",
+      "mitigations": [
+        "Implement token-based authentication (JWT / OAuth2)",
+        "Validate identity at every trust boundary crossing",
+        "Reject unauthenticated requests at the entry point"
+      ],
+      "data_flow": "df1",
+      "assets": [
+        "user-credentials",
+        "auth-tokens"
+      ],
+      "root_cause": "authenticated=False|crosses_boundary=True|flow=df1",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The api-gateway allows data flow df1 to cross a trust boundary without enforcing authentication, meaning any caller can send requests as if they were a legitimate, trusted entity. An attacker can exploit this by directly invoking downstream services or APIs through the gateway without presenting any credentials, effectively impersonating authorized clients or internal systems. This is critical for an API gateway specifically because it is the primary enforcement point for access control-if spoofing succeeds here, all services behind it are exposed to unauthorized access with no compensating control upstream."
+    },
+    {
+      "id": "T-002",
+      "component": "api-gateway",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Boundary Crossing",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df2' crosses a trust boundary from 'mobile-app' to 'api-gateway' without authentication. An attacker can impersonate any client and send arbitrary requests without proving identity.",
+      "mitigations": [
+        "Implement token-based authentication (JWT / OAuth2)",
+        "Validate identity at every trust boundary crossing",
+        "Reject unauthenticated requests at the entry point"
+      ],
+      "data_flow": "df2",
+      "assets": [
+        "user-credentials",
+        "auth-tokens"
+      ],
+      "root_cause": "authenticated=False|crosses_boundary=True|flow=df2",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The api-gateway has a dataflow (df2) that crosses a trust boundary without enforcing authentication, meaning any caller can send requests to this endpoint and the gateway will process them as if they were legitimate. An attacker can exploit this by directly invoking the unauthenticated flow to impersonate authorized clients, bypass access controls, or reach downstream services that implicitly trust the gateway as a validated entry point. This is critical because the api-gateway is the primary enforcement perimeter for the entire system, and a missing authentication check here nullifies all downstream security assumptions built on the premise that the gateway pre-validates identity."
+    },
+    {
+      "id": "T-003",
+      "component": "api-gateway",
+      "category": "Spoofing",
+      "subcategory": "Unauthenticated Internet-Facing Component",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'api-gateway' is internet-facing and accepts unauthenticated requests. Any external actor can interact with this component without proving their identity, enabling spoofing and impersonation.",
+      "mitigations": [
+        "Require authentication on all internet-facing endpoints",
+        "Implement API key validation or OAuth2 at the entry point",
+        "Deploy a WAF to filter unauthenticated traffic"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|unauthenticated_incoming|component=api-gateway",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The api-gateway is exposed to the internet without enforcing authentication on incoming requests, meaning any caller can interact with it as if they were a legitimate client. An attacker can exploit this by sending crafted requests that impersonate valid users, services, or systems, effectively bypassing identity controls and gaining unauthorized access to downstream APIs and services. For an API gateway specifically, this is critical because it serves as the single entry point to backend infrastructure, so unauthenticated access here cascades trust failures across every connected service."
+    },
+    {
+      "id": "T-004",
+      "component": "order-db",
+      "category": "Tampering",
+      "subcategory": "Unencrypted Boundary-Crossing Flow",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df9' crosses a trust boundary from 'order-service' to 'order-db' without encryption. An attacker with network access can intercept and modify data in transit without detection.",
+      "mitigations": [
+        "Enforce TLS/HTTPS on all boundary-crossing flows",
+        "Implement certificate pinning for sensitive communications",
+        "Use mutual TLS (mTLS) for service-to-service communication"
+      ],
+      "data_flow": "df9",
+      "assets": [
+        "order-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|crosses_boundary=True|flow=df9",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The data flow df9 transmits order data to or from the order-db across a trust boundary without encryption, meaning the data travels as plaintext over the network segment between those boundaries. An attacker with network access to that segment-whether through ARP spoofing, a compromised switch, or a rogue host on the same subnet-can intercept, read, and modify order records, payment details, or query responses in transit without either endpoint detecting the manipulation. For a database storing order data, this exposes sensitive customer and transaction information to both eavesdropping and silent data tampering, which can corrupt business records or facilitate fraud."
+    },
+    {
+      "id": "T-005",
+      "component": "inventory-db",
+      "category": "Tampering",
+      "subcategory": "Unencrypted Boundary-Crossing Flow",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df10' crosses a trust boundary from 'inventory-service' to 'inventory-db' without encryption. An attacker with network access can intercept and modify data in transit without detection.",
+      "mitigations": [
+        "Enforce TLS/HTTPS on all boundary-crossing flows",
+        "Implement certificate pinning for sensitive communications",
+        "Use mutual TLS (mTLS) for service-to-service communication"
+      ],
+      "data_flow": "df10",
+      "assets": [
+        "product-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|crosses_boundary=True|flow=df10",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-006",
+      "component": "auth-service",
+      "category": "Tampering",
+      "subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df3' from 'api-gateway' to 'auth-service' carries sensitive assets (user-credentials) without encryption. Data integrity cannot be guaranteed and assets are exposed to interception and modification.",
+      "mitigations": [
+        "Encrypt all flows carrying sensitive data",
+        "Implement data integrity checks (HMAC or digital signatures)",
+        "Classify and track sensitive assets through all flows"
+      ],
+      "data_flow": "df3",
+      "assets": [
+        "user-credentials"
+      ],
+      "root_cause": "encrypted_in_transit=False|sensitive_assets|flow=df3",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-007",
+      "component": "order-service",
+      "category": "Tampering",
+      "subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df4' from 'api-gateway' to 'order-service' carries sensitive assets (order-data) without encryption. Data integrity cannot be guaranteed and assets are exposed to interception and modification.",
+      "mitigations": [
+        "Encrypt all flows carrying sensitive data",
+        "Implement data integrity checks (HMAC or digital signatures)",
+        "Classify and track sensitive assets through all flows"
+      ],
+      "data_flow": "df4",
+      "assets": [
+        "order-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|sensitive_assets|flow=df4",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-008",
+      "component": "inventory-service",
+      "category": "Tampering",
+      "subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df5' from 'api-gateway' to 'inventory-service' carries sensitive assets (product-data) without encryption. Data integrity cannot be guaranteed and assets are exposed to interception and modification.",
+      "mitigations": [
+        "Encrypt all flows carrying sensitive data",
+        "Implement data integrity checks (HMAC or digital signatures)",
+        "Classify and track sensitive assets through all flows"
+      ],
+      "data_flow": "df5",
+      "assets": [
+        "product-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|sensitive_assets|flow=df5",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-009",
+      "component": "order-db",
+      "category": "Tampering",
+      "subcategory": "Storage Not Encrypted at Rest",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'order-db' (type: database) is not encrypted at rest. If the underlying storage is compromised, all stored data is directly accessible and can be tampered with.",
+      "mitigations": [
+        "Enable encryption at rest using AES-256 or equivalent",
+        "Use cloud provider managed encryption keys (e.g. AWS KMS)",
+        "Rotate encryption keys regularly"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "encrypted_at_rest=False|component=order-db",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-010",
+      "component": "inventory-db",
+      "category": "Tampering",
+      "subcategory": "Storage Not Encrypted at Rest",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'inventory-db' (type: database) is not encrypted at rest. If the underlying storage is compromised, all stored data is directly accessible and can be tampered with.",
+      "mitigations": [
+        "Enable encryption at rest using AES-256 or equivalent",
+        "Use cloud provider managed encryption keys (e.g. AWS KMS)",
+        "Rotate encryption keys regularly"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "encrypted_at_rest=False|component=inventory-db",
+      "attack_techniques": [
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-011",
+      "component": "web-browser",
+      "category": "Repudiation",
+      "subcategory": "Logging Disabled",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Logging is disabled on 'web-browser' (type: web-application). Actions performed by or against this component cannot be audited or attributed. Security incidents may go undetected and forensic investigation becomes impossible.",
+      "mitigations": [
+        "Enable structured logging on all components",
+        "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
+        "Define log retention policies aligned with compliance requirements"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "logging=False|component=web-browser",
+      "attack_techniques": [
+        "T1078",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        }
+      ],
+      "threat_context": "The web browser component has logging disabled, meaning user actions, navigation events, authentication attempts, and data submissions are not recorded anywhere in the system. An attacker who performs malicious actions through the browser-such as unauthorized data access, session hijacking, or injection attacks-can deny any involvement because no audit trail exists to correlate their activity to specific events. This is critical for a browser component because it is a primary user-facing attack surface, and without logs, incident response, forensic analysis, and compliance auditing are all rendered effectively impossible."
+    },
+    {
+      "id": "T-012",
+      "component": "mobile-app",
+      "category": "Repudiation",
+      "subcategory": "Logging Disabled",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Logging is disabled on 'mobile-app' (type: mobile-application). Actions performed by or against this component cannot be audited or attributed. Security incidents may go undetected and forensic investigation becomes impossible.",
+      "mitigations": [
+        "Enable structured logging on all components",
+        "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
+        "Define log retention policies aligned with compliance requirements"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "logging=False|component=mobile-app",
+      "attack_techniques": [
+        "T1078",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        }
+      ],
+      "threat_context": "The mobile-app has logging explicitly disabled, meaning no record of user actions, transactions, or security-relevant events is captured on the client side or transmitted for server-side audit. An attacker or malicious insider can perform unauthorized actions-such as data exfiltration, fraudulent transactions, or privilege abuse-and later deny any involvement, with no forensic trail to contradict their claim. For a mobile app, this is critical because it eliminates the ability to reconstruct attack timelines, support incident response, satisfy compliance requirements (e.g., PCI-DSS, GDPR audit obligations), or detect patterns of abuse after the fact."
+    },
+    {
+      "id": "T-013",
+      "component": "inventory-service",
+      "category": "Repudiation",
+      "subcategory": "Logging Disabled",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Logging is disabled on 'inventory-service' (type: microservice). Actions performed by or against this component cannot be audited or attributed. Security incidents may go undetected and forensic investigation becomes impossible.",
+      "mitigations": [
+        "Enable structured logging on all components",
+        "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
+        "Define log retention policies aligned with compliance requirements"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "logging=False|component=inventory-service",
+      "attack_techniques": [
+        "T1078",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-014",
+      "component": "order-db",
+      "category": "Repudiation",
+      "subcategory": "Logging Disabled",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Logging is disabled on 'order-db' (type: database). Actions performed by or against this component cannot be audited or attributed. Security incidents may go undetected and forensic investigation becomes impossible.",
+      "mitigations": [
+        "Enable structured logging on all components",
+        "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
+        "Define log retention policies aligned with compliance requirements"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "logging=False|component=order-db",
+      "attack_techniques": [
+        "T1078",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-015",
+      "component": "inventory-db",
+      "category": "Repudiation",
+      "subcategory": "Logging Disabled",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Logging is disabled on 'inventory-db' (type: database). Actions performed by or against this component cannot be audited or attributed. Security incidents may go undetected and forensic investigation becomes impossible.",
+      "mitigations": [
+        "Enable structured logging on all components",
+        "Forward logs to a centralized log management system (e.g. CloudWatch, ELK)",
+        "Define log retention policies aligned with compliance requirements"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "logging=False|component=inventory-db",
+      "attack_techniques": [
+        "T1078",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-016",
+      "component": "web-browser",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'web-browser' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=web-browser",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-017",
+      "component": "mobile-app",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'mobile-app' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=mobile-app",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-018",
+      "component": "api-gateway",
+      "category": "Repudiation",
+      "subcategory": "Internet-Facing Component Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'api-gateway' is internet-facing and has logging disabled. All external interactions with this component are unaudited. Attackers can probe, enumerate, and exploit this component without leaving any trace in the system.",
+      "mitigations": [
+        "Enable access logging on all internet-facing components",
+        "Log all requests including source IP, method, and response codes",
+        "Set up real-time alerting on anomalous access patterns"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "internet_facing=True|logging=False|component=api-gateway",
+      "attack_techniques": [
+        "T1078",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-019",
+      "component": "order-db",
+      "category": "Repudiation",
+      "subcategory": "Sensitive Asset Handler Without Logging",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'order-db' handles sensitive assets (order-data) via flow 'df9' but has logging disabled. Access to and operations on sensitive data cannot be audited or attributed.",
+      "mitigations": [
+        "Enable audit logging on all components that handle sensitive data",
+        "Log all read and write operations on sensitive assets",
+        "Implement tamper-evident logging (e.g. write-once log storage)"
+      ],
+      "data_flow": "df9",
+      "assets": [
+        "order-data"
+      ],
+      "root_cause": "logging=False|sensitive_assets|component=order-db",
+      "attack_techniques": [
+        "T1552",
+        "T1555"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1555",
+          "technique_name": "Credentials from Password Stores",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1555/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-020",
+      "component": "inventory-db",
+      "category": "Repudiation",
+      "subcategory": "Boundary-Crossing Flow With No Logging on Either Endpoint",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df10' crosses a trust boundary from 'inventory-service' to 'inventory-db' but neither endpoint has logging enabled. Cross-boundary interactions are completely unaudited, making it impossible to detect or investigate unauthorized access.",
+      "mitigations": [
+        "Enable logging on all components involved in boundary-crossing flows",
+        "Log the full request and response metadata at both endpoints",
+        "Correlate logs across boundaries using a shared request ID"
+      ],
+      "data_flow": "df10",
+      "assets": [],
+      "root_cause": "boundary_no_logging|flow=df10",
+      "attack_techniques": [
+        "T1078",
+        "T1133",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access",
+            "Defense Evasion",
+            "Persistence",
+            "Privilege Escalation"
+          ],
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1078/"
+        },
+        {
+          "tactics": [
+            "Initial Access",
+            " Persistence"
+          ],
+          "technique_id": "T1133",
+          "technique_name": "External Remote Services",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1133/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-021",
+      "component": "order-db",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Data Exposed in Unencrypted Boundary-Crossing Flow",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df9' carries sensitive assets (order-data) across a trust boundary from 'order-service' to 'order-db' without encryption. An attacker with network access can intercept and read the sensitive data in transit.",
+      "mitigations": [
+        "Enforce TLS/HTTPS on all boundary-crossing flows",
+        "Encrypt sensitive fields individually (field-level encryption)",
+        "Avoid transmitting credentials or PII unless absolutely necessary"
+      ],
+      "data_flow": "df9",
+      "assets": [
+        "order-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|crosses_boundary=True|sensitive_assets|flow=df9",
+      "attack_techniques": [
+        "T1528",
+        "T1539",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1528",
+          "technique_name": "Steal Application Access Token",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1528/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1539",
+          "technique_name": "Steal Web Session Cookie",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1539/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-022",
+      "component": "inventory-db",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Data Exposed in Unencrypted Boundary-Crossing Flow",
+      "severity": "High",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Flow 'df10' carries sensitive assets (product-data) across a trust boundary from 'inventory-service' to 'inventory-db' without encryption. An attacker with network access can intercept and read the sensitive data in transit.",
+      "mitigations": [
+        "Enforce TLS/HTTPS on all boundary-crossing flows",
+        "Encrypt sensitive fields individually (field-level encryption)",
+        "Avoid transmitting credentials or PII unless absolutely necessary"
+      ],
+      "data_flow": "df10",
+      "assets": [
+        "product-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|crosses_boundary=True|sensitive_assets|flow=df10",
+      "attack_techniques": [
+        "T1528",
+        "T1539",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1528",
+          "technique_name": "Steal Application Access Token",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1528/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1539",
+          "technique_name": "Steal Web Session Cookie",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1539/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-023",
+      "component": "auth-service",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Data in Unencrypted Internal Flow",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal flow 'df3' carries sensitive assets (user-credentials) from 'api-gateway' to 'auth-service' without encryption. An attacker who achieves lateral movement within the zone can intercept this data.",
+      "mitigations": [
+        "Encrypt all internal flows carrying sensitive data",
+        "Implement a service mesh with automatic mTLS",
+        "Apply least-privilege data access \u2014 only pass what each service needs"
+      ],
+      "data_flow": "df3",
+      "assets": [
+        "user-credentials"
+      ],
+      "root_cause": "encrypted_in_transit=False|internal|sensitive_assets|flow=df3",
+      "attack_techniques": [
+        "T1539",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1539",
+          "technique_name": "Steal Web Session Cookie",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1539/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-024",
+      "component": "order-service",
+      "category": "Information Disclosure",
+      "subcategory": "Sensitive Data in Unencrypted Internal Flow",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "Internal flow 'df4' carries sensitive assets (order-data) from 'api-gateway' to 'order-service' without encryption. An attacker who achieves lateral movement within the zone can intercept this data.",
+      "mitigations": [
+        "Encrypt all internal flows carrying sensitive data",
+        "Implement a service mesh with automatic mTLS",
+        "Apply least-privilege data access \u2014 only pass what each service needs"
+      ],
+      "data_flow": "df4",
+      "assets": [
+        "order-data"
+      ],
+      "root_cause": "encrypted_in_transit=False|internal|sensitive_assets|flow=df4",
+      "attack_techniques": [
+        "T1539",
+        "T1552"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1539",
+          "technique_name": "Steal Web Session Cookie",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1539/"
+        },
+        {
+          "tactics": [
+            "Credential Access"
+          ],
+          "technique_id": "T1552",
+          "technique_name": "Unsecured Credentials",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1552/"
+        }
+      ],
+      "threat_context": ""
+    },
+    {
+      "id": "T-025",
+      "component": "web-browser",
+      "category": "Denial of Service",
+      "subcategory": "Internet-Facing Component Without Rate Limiting",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'web-browser' is internet-facing but has no rate limiting configured. An attacker can flood this component with requests, exhausting resources and causing service degradation or outage for legitimate users.",
+      "mitigations": [
+        "Implement rate limiting at the API gateway or load balancer",
+        "Configure per-client and per-endpoint request quotas",
+        "Use token bucket or sliding window rate limiting algorithms"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "rate_limiting=False|internet_facing=True|component=web-browser",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The web-browser component is exposed to the internet without any rate limiting controls, meaning an attacker can send an unbounded number of requests or trigger resource-intensive operations repeatedly without restriction. An attacker can exploit this by flooding the browser-facing endpoint with high-volume automated requests, exhausting CPU, memory, or network resources and rendering the component unavailable to legitimate users. For an internet-facing browser component, this is critical because it directly impacts end-user availability and can cascade into backend service exhaustion if requests are proxied downstream."
+    },
+    {
+      "id": "T-026",
+      "component": "mobile-app",
+      "category": "Denial of Service",
+      "subcategory": "Internet-Facing Component Without Rate Limiting",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'mobile-app' is internet-facing but has no rate limiting configured. An attacker can flood this component with requests, exhausting resources and causing service degradation or outage for legitimate users.",
+      "mitigations": [
+        "Implement rate limiting at the API gateway or load balancer",
+        "Configure per-client and per-endpoint request quotas",
+        "Use token bucket or sliding window rate limiting algorithms"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "rate_limiting=False|internet_facing=True|component=mobile-app",
+      "attack_techniques": [
+        "T1059",
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Execution"
+          ],
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1059/"
+        },
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The mobile-app exposes its backend endpoints to the internet without any rate limiting controls, meaning any client can send an unbounded number of requests without restriction. An attacker can exploit this by scripting high-volume request floods-either directly or via a botnet-targeting authentication endpoints, API calls, or resource-intensive operations to exhaust server CPU, memory, thread pools, or downstream service quotas. For a mobile app specifically, this is critical because the API surface is publicly discoverable through reverse-engineering the app binary, making automated abuse trivial and potentially rendering the service unavailable for all legitimate users."
+    },
+    {
+      "id": "T-027",
+      "component": "web-browser",
+      "category": "Denial of Service",
+      "subcategory": "No DDoS Protection on Public-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'web-browser' is publicly accessible but has no DDoS protection or WAF configured. Volumetric or application-layer DDoS attacks can render this component unavailable.",
+      "mitigations": [
+        "Enable cloud provider DDoS protection (e.g. AWS Shield, Azure DDoS Protection)",
+        "Deploy a Web Application Firewall (WAF) for application-layer protection",
+        "Configure traffic scrubbing and anomaly detection"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "ddos_protection=False|waf_enabled=False|component=web-browser",
+      "attack_techniques": [
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The web-browser component lacks both DDoS protection and a Web Application Firewall, meaning it is directly exposed to volumetric and application-layer flood attacks without any upstream filtering or rate-limiting mechanism. An attacker can exhaust the component's available connections, memory, or CPU by sending a high volume of requests or malformed traffic, rendering it unavailable to legitimate users. This is critical because the web-browser acts as the user-facing entry point, so successful denial-of-service directly and immediately impacts all end users and any dependent downstream services."
+    },
+    {
+      "id": "T-028",
+      "component": "mobile-app",
+      "category": "Denial of Service",
+      "subcategory": "No DDoS Protection on Public-Facing Component",
+      "severity": "Critical",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'mobile-app' is publicly accessible but has no DDoS protection or WAF configured. Volumetric or application-layer DDoS attacks can render this component unavailable.",
+      "mitigations": [
+        "Enable cloud provider DDoS protection (e.g. AWS Shield, Azure DDoS Protection)",
+        "Deploy a Web Application Firewall (WAF) for application-layer protection",
+        "Configure traffic scrubbing and anomaly detection"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "ddos_protection=False|waf_enabled=False|component=mobile-app",
+      "attack_techniques": [
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": "The mobile-app lacks both DDoS protection and a Web Application Firewall, meaning its public-facing endpoints have no rate limiting, traffic scrubbing, or volumetric attack mitigation in place. An attacker can flood the app's backend APIs or authentication endpoints with high-volume requests using botnets or amplification techniques, exhausting server resources and rendering the application unavailable to legitimate users. For a mobile app, this is critical because prolonged unavailability directly impacts user trust, revenue, and SLA compliance, while also potentially masking simultaneous credential stuffing or other targeted attacks occurring under the noise of the DDoS traffic."
+    },
+    {
+      "id": "T-029",
+      "component": "api-gateway",
+      "category": "Denial of Service",
+      "subcategory": "No DDoS Protection on Public-Facing Component",
+      "severity": "Medium",
+      "sources": [
+        "STRIDE"
+      ],
+      "description": "'api-gateway' is publicly accessible but has no DDoS protection or WAF configured. Volumetric or application-layer DDoS attacks can render this component unavailable.",
+      "mitigations": [
+        "Enable cloud provider DDoS protection (e.g. AWS Shield, Azure DDoS Protection)",
+        "Deploy a Web Application Firewall (WAF) for application-layer protection",
+        "Configure traffic scrubbing and anomaly detection"
+      ],
+      "data_flow": null,
+      "assets": [],
+      "root_cause": "ddos_protection=False|waf_enabled=False|component=api-gateway",
+      "attack_techniques": [
+        "T1190"
+      ],
+      "attack_mapping": [
+        {
+          "tactics": [
+            "Initial Access"
+          ],
+          "technique_id": "T1190",
+          "technique_name": "Exploit Public-Facing Application",
+          "framework": "ATTACK",
+          "url": "https://attack.mitre.org/techniques/T1190/"
+        }
+      ],
+      "threat_context": ""
+    }
+  ],
+  "attack_paths": [
+    {
+      "id": "AP-001",
+      "name": "Initial Access via web-browser -> Impact on user-db",
+      "severity": "Critical",
+      "score": 63,
+      "rank": 1,
+      "entry_point": "web-browser",
+      "target": "user-db",
+      "components_traversed": [
+        "web-browser",
+        "api-gateway",
+        "auth-service",
+        "user-db"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-011",
+        "T-001",
+        "T-006"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "web-browser",
+          "component_type": "web-application",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-011",
+          "threat_subcategory": "Logging Disabled",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 2,
+          "component": "api-gateway",
+          "component_type": "api-gateway",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "auth-service",
+          "component_type": "microservice",
+          "tactic": "Execution",
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "threat_id": "T-006",
+          "threat_subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+          "threat_severity": "Medium"
+        },
+        {
+          "step": 4,
+          "component": "user-db",
+          "component_type": "database",
+          "tactic": "Impact",
+          "technique_id": "",
+          "technique_name": "Target Reached",
+          "framework": "",
+          "threat_id": "",
+          "threat_subcategory": "High-value target accessed",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "This critical-severity attack path begins at the web browser, where an attacker leverages valid or stolen credentials to initiate access while the absence of logging means every move goes completely undetected from the start. The attacker then reaches the API gateway, which fails to enforce authentication at its boundary, allowing lateral movement deeper into the architecture without any challenge or verification. Once inside, the attacker interacts with the auth-service, exploiting unencrypted communication flows to intercept or manipulate sensitive data in transit - including credentials or tokens that unlock the next layer. This chain of weaknesses forms a direct, unobstructed corridor from the public internet straight to the user database, with no defensive layer successfully breaking the path. The attacker arrives at the user-db with full access, able to extract, modify, or destroy the organization's most sensitive user data.",
+      "step_walkthrough": [
+        {
+          "step": 1,
+          "threat_explanation": "Using valid credentials - whether stolen, purchased, or obtained through phishing - the attacker initiates a session from the web browser. The critical weakness here is that logging is disabled, meaning there is no audit trail of this access. Under MITRE tactic Initial Access via Valid Accounts (T1078), this is particularly dangerous because the attacker blends in as a legitimate user and forensic reconstruction of the breach becomes nearly impossible after the fact."
+        },
+        {
+          "step": 2,
+          "threat_explanation": "The attacker's request reaches the API gateway, which is supposed to act as a controlled entry point into internal services. However, the gateway allows unauthenticated boundary crossing - it does not enforce a secondary authentication or authorization check before routing traffic to internal components. Under MITRE tactic Initial Access via Valid Accounts, this means the attacker can traverse from the external-facing layer into the internal architecture without being stopped, re-verified, or even flagged."
+        },
+        {
+          "step": 3,
+          "threat_explanation": "Now inside the perimeter, the attacker reaches the auth-service. The communication flow to and from this service is unencrypted despite carrying sensitive assets such as credentials, tokens, or session data. Under MITRE tactic Execution via Command and Scripting Interpreter (T1059), an attacker in a position to intercept this traffic - which they now are, having bypassed the gateway - can capture authentication material, replay it, or inject commands. This step hands the attacker the keys needed to authenticate directly against the database."
+        },
+        {
+          "step": 4,
+          "threat_explanation": "The attacker reaches the user-db with the access and credentials harvested in the previous steps. At this stage they can exfiltrate the full contents of the user database including usernames, hashed or plaintext passwords, email addresses, personal identifiable information (PII), and any linked profile or behavioral data. They can also alter records - for example escalating account privileges - or permanently delete data causing irreversible data loss. The combination of a high-value target and the lack of any prior detection means this damage can occur silently and at scale."
+        }
+      ],
+      "business_impact": "A breach of the user database through this undetected path constitutes a reportable data incident under GDPR Article 33, CCPA, and PCI DSS Requirement 12.10, exposing the organization to mandatory breach notifications, regulatory fines potentially reaching tens of millions of dollars, and the lasting reputational damage of publicly disclosing that customer personal data was silently compromised from end to end."
+    },
+    {
+      "id": "AP-002",
+      "name": "Initial Access via mobile-app -> Impact on user-db",
+      "severity": "Critical",
+      "score": 63,
+      "rank": 2,
+      "entry_point": "mobile-app",
+      "target": "user-db",
+      "components_traversed": [
+        "mobile-app",
+        "api-gateway",
+        "auth-service",
+        "user-db"
+      ],
+      "step_count": 4,
+      "threat_ids": [
+        "T-012",
+        "T-001",
+        "T-006"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "mobile-app",
+          "component_type": "mobile-application",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-012",
+          "threat_subcategory": "Logging Disabled",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 2,
+          "component": "api-gateway",
+          "component_type": "api-gateway",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 3,
+          "component": "auth-service",
+          "component_type": "microservice",
+          "tactic": "Execution",
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "threat_id": "T-006",
+          "threat_subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+          "threat_severity": "Medium"
+        },
+        {
+          "step": 4,
+          "component": "user-db",
+          "component_type": "database",
+          "tactic": "Impact",
+          "technique_id": "",
+          "technique_name": "Target Reached",
+          "framework": "",
+          "threat_id": "",
+          "threat_subcategory": "High-value target accessed",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "",
+      "step_walkthrough": [],
+      "business_impact": ""
+    },
+    {
+      "id": "AP-003",
+      "name": "Initial Access via api-gateway -> Impact on user-db",
+      "severity": "Critical",
+      "score": 53,
+      "rank": 3,
+      "entry_point": "api-gateway",
+      "target": "user-db",
+      "components_traversed": [
+        "api-gateway",
+        "auth-service",
+        "user-db"
+      ],
+      "step_count": 3,
+      "threat_ids": [
+        "T-001",
+        "T-006"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "component": "api-gateway",
+          "component_type": "api-gateway",
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "framework": "ATTACK",
+          "threat_id": "T-001",
+          "threat_subcategory": "Unauthenticated Boundary Crossing",
+          "threat_severity": "Critical"
+        },
+        {
+          "step": 2,
+          "component": "auth-service",
+          "component_type": "microservice",
+          "tactic": "Execution",
+          "technique_id": "T1059",
+          "technique_name": "Command and Scripting Interpreter",
+          "framework": "ATTACK",
+          "threat_id": "T-006",
+          "threat_subcategory": "Unencrypted Flow Carrying Sensitive Assets",
+          "threat_severity": "Medium"
+        },
+        {
+          "step": 3,
+          "component": "user-db",
+          "component_type": "database",
+          "tactic": "Impact",
+          "technique_id": "",
+          "technique_name": "Target Reached",
+          "framework": "",
+          "threat_id": "",
+          "threat_subcategory": "High-value target accessed",
+          "threat_severity": "High"
+        }
+      ],
+      "attack_story": "This is a critical-severity attack path that must be treated as an active threat requiring immediate remediation. An attacker begins by exploiting an unauthenticated boundary crossing at the API gateway, bypassing what should be the first and most important line of defense to gain illegitimate access using valid account credentials. From there, the attacker moves laterally into the auth-service, where unencrypted traffic allows them to intercept or manipulate sensitive data in transit - including credentials or session tokens - using scripting or command execution techniques. This unencrypted flow acts as a bridge that hands the attacker everything they need to reach the user database unchallenged. The path terminates at the user-db, a high-value target now fully exposed due to the compounding failures at each preceding layer.",
+      "step_walkthrough": [
+        {
+          "step": 1,
+          "threat_explanation": "At the API gateway, the attacker exploits an Unauthenticated Boundary Crossing weakness, mapped to MITRE ATT&CK tactic Initial Access via the Valid Accounts technique. This means the gateway fails to enforce authentication before allowing traffic to proceed deeper into the architecture. Rather than breaking down a door, the attacker walks through an unlocked one - using legitimate-looking account credentials to cross a trust boundary that should have challenged them. This is the critical entry point that makes every subsequent step possible; without this failure, the path collapses entirely."
+        },
+        {
+          "step": 2,
+          "threat_explanation": "Once inside, the attacker reaches the auth-service - the component explicitly responsible for managing authentication - and exploits the fact that traffic flows between components without encryption. Under MITRE ATT&CK this maps to the Execution tactic using the Command and Scripting Interpreter technique, meaning the attacker can intercept unencrypted flows to extract sensitive assets such as credentials, tokens, or session data, and potentially inject or execute commands. The irony here is severe: the auth-service, designed to verify trust, becomes the mechanism through which trust is completely undermined. This unencrypted channel directly enables the attacker to arrive at the final target with full context and likely valid credentials in hand."
+        },
+        {
+          "step": 3,
+          "threat_explanation": "The attacker reaches the user-db, the high-value target at the end of this path. At this stage, the attacker can extract the full contents of the user database - including usernames, hashed or plaintext passwords, email addresses, personal identifiable information (PII), and any other stored user attributes. Depending on the database's access controls, they may also be able to modify or delete records, create backdoor accounts, or corrupt data integrity. Because the attacker arrived here via a trusted, authenticated flow, standard database-level monitoring may not flag this access as anomalous, extending the window of exposure."
+        }
+      ],
+      "business_impact": "A full breach of the user database exposes your organization to mandatory breach notification obligations and significant regulatory penalties under frameworks such as GDPR, CCPA, and PCI DSS, while the public disclosure of customer PII will cause lasting reputational damage that erodes user trust and invites class-action liability."
+    }
+  ],
+  "additional_risks": [
+    {
+      "component": "api-gateway",
+      "risk": "Multiple API gateway instances appear to exist without a clear indication of centralized policy synchronization, meaning authentication and authorization rules may be inconsistently enforced across gateway instances. An attacker could deliberately route requests through a less-hardened gateway instance to bypass controls enforced on others.",
+      "suggested_mitigation": "Implement a centralized API gateway control plane (e.g., using a service mesh or shared configuration management) to enforce uniform security policies across all gateway instances, and use automated policy drift detection to alert on mismatches."
+    },
+    {
+      "component": "order-service",
+      "risk": "The order-service interacts with both order-db and inventory-db, creating a risk of cross-service data integrity failure where a partially committed transaction (e.g., order created but inventory not decremented) leaves the system in an inconsistent state that can be exploited for inventory manipulation. Without distributed transaction controls, a malicious or faulty client could trigger race conditions to order items beyond available stock.",
+      "suggested_mitigation": "Implement the Saga pattern or two-phase commit with compensating transactions between order-service and inventory-service to ensure atomicity across service boundaries, and enforce inventory reservation locks at the database level."
+    },
+    {
+      "component": "auth-service",
+      "risk": "The auth-service appears to be a single shared authentication component serving both web-browser and mobile-app clients through the API gateway, making it a high-value single point of failure and a concentration risk for credential harvesting attacks. If the auth-service is compromised or issues tokens without sufficient binding to client context, tokens obtained via one client type could be replayed through another.",
+      "suggested_mitigation": "Bind issued tokens to client type and device fingerprint using claims (e.g., client_id, device_id in JWT), enforce token audience validation at the API gateway, and isolate auth-service with strict network segmentation to limit blast radius of a compromise."
+    }
+  ]
+}

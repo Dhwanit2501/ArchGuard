@@ -32,11 +32,13 @@ load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from Threat_Engine.llm.enrichment import (
-    enrich_attack_paths,
-    enrich_threats,
-    generate_additional_risks,
-)
+# from Threat_Engine.llm.enrichment import (
+#     enrich_attack_paths,
+#     enrich_threats,
+#     generate_additional_risks,
+# )
+
+
 
 
 def load_results(path: str) -> dict:
@@ -97,6 +99,17 @@ def main():
         default=10,
         help="Maximum number of threats to explain (default: 10)"
     )
+    parser.add_argument(
+        "--ollama",
+        action="store_true",
+        help="Use local Ollama model instead of Claude API"
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="llama3.2:3b",  # change from llama3.1 to llama3.2:3b
+        help="Ollama model to use (default: llama3.2:3b)"
+    )
 
     args   = parser.parse_args()
     input_path  = args.results
@@ -125,6 +138,20 @@ def main():
             for t in threats
         ]
     }
+
+    # Select enrichment module based on flag
+    if args.ollama:
+        from Threat_Engine.llm import enrichment_ollama as enrichment_mod
+        enrichment_mod.MODEL = args.model
+        print(f"  Provider     : Ollama (local)")
+        print(f"  Model        : {args.model}")
+    else:
+        from Threat_Engine.llm import enrichment as enrichment_mod
+        print(f"  Provider     : Anthropic Claude")
+ 
+    enrich_attack_paths       = enrichment_mod.enrich_attack_paths
+    enrich_threats            = enrichment_mod.enrich_threats
+    generate_additional_risks = enrichment_mod.generate_additional_risks
 
     print(f"  Architecture : {arch_type}")
     print(f"  Threats      : {len(threats)}")
