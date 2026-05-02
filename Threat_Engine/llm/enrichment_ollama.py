@@ -34,9 +34,7 @@ API_URL = "http://localhost:11434/api/chat"
 MODEL   = "llama3.2:3b"
 
 
-# ─────────────────────────────────────────────────────────────────────
 # Core API call
-# ─────────────────────────────────────────────────────────────────────
 
 def _call_ollama(system_prompt: str, user_prompt: str, max_tokens: int = 1000) -> str | None:
     """
@@ -122,9 +120,7 @@ def _parse_json_response(text: str) -> dict | None:
     return None
 
 
-# ─────────────────────────────────────────────────────────────────────
 # Enrichment functions
-# ─────────────────────────────────────────────────────────────────────
 
 def enrich_attack_paths(attack_paths: list, architecture_type: str) -> list:
     """
@@ -233,9 +229,7 @@ def generate_additional_risks(arch: dict, threats: list,
     return []
 
 
-# ─────────────────────────────────────────────────────────────────────
 # Main enrichment entry point
-# ─────────────────────────────────────────────────────────────────────
 
 def enrich_results(results: dict) -> dict:
     """
